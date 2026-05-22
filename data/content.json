@@ -1,0 +1,13 @@
+{
+    "titel": "Artillery Command",
+    "subtitel": "Funker test",
+    "btnText": "Start",
+
+    "navText": {
+        "home": "Home",
+        "game": "Game",
+        "leaderboard": "Leaderboard",
+        "help": "Help",
+        "about": "About"
+    }
+}
