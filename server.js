@@ -6,12 +6,15 @@ const app = express();
 const port = 8080;
 
 app.use(express.static('public', { index: false })); // static files in public folder  
+// Local Bootstrap for use in HTML pages offline
+app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist'))); 
+app.use('/b-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')));
 
 // adding Layout to pages
 function renderPagesWithLayout(pageName) {
-    const pagePath = path.join(__dirname, 'public', pageName);
-    const headPath = path.join(__dirname, 'public', 'head.html');
-    const navbarPath = path.join(__dirname, 'public', 'navbar.html');
+    const pagePath = path.join(__dirname, 'public', 'views', pageName);
+    const headPath = path.join(__dirname, 'public', 'components', 'head.html');
+    const navbarPath = path.join(__dirname, 'public', 'components', 'navbar.html');
 
     let pageContent = fs.readFileSync(pagePath, 'utf8');
     let headContent = fs.readFileSync(headPath, 'utf8');
