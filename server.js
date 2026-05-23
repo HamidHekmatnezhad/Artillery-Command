@@ -7,37 +7,65 @@ const port = 8080;
 
 app.use(express.static('public', { index: false })); // static files in public folder  
 
-// adding NAVBAR to pages
-function renderPageWithNavbar(pageName) {
+// adding Layout to pages
+function renderPagesWithLayout(pageName) {
     const pagePath = path.join(__dirname, 'public', pageName);
+    const headPath = path.join(__dirname, 'public', 'head.html');
     const navbarPath = path.join(__dirname, 'public', 'navbar.html');
 
     let pageContent = fs.readFileSync(pagePath, 'utf8');
+    let headContent = fs.readFileSync(headPath, 'utf8');
     let navbarContent = fs.readFileSync(navbarPath, 'utf8');
 
-    return pageContent.replace('{{NAVBAR}}', navbarContent);
+    pageContent = pageContent.replace('{{HEAD}}', headContent);
+    pageContent = pageContent.replace('{{NAVBAR}}', navbarContent);
+
+    return pageContent;
 }
 
 // Routing
-// ------------- index -------------
-app.get('/', (req,res) => {
-    const renderedPage = renderPageWithNavbar('index.html');
+// ------------- home -------------
+app.get('/', (req, res) => {
+    res.redirect('/index');
+    });
+app.get('/index', (req,res) => {
+    const renderedPage = renderPagesWithLayout('index.html');
     res.send(renderedPage);
 });
+
 // ------------- game -------------
 app.get('/game', (req,res) => {
-    const renderedPage = renderPageWithNavbar('game.html');
+    const renderedPage = renderPagesWithLayout('game.html');
     res.send(renderedPage);
 });
+
+// ------------- leaderboard -------------
+app.get('/leaderboard', (req,res) => {
+    const renderedPage = renderPagesWithLayout('leaderboard.html');
+    res.send(renderedPage);
+});
+
+// ------------- help -------------
+app.get('/help', (req,res) => {
+    const renderedPage = renderPagesWithLayout('help.html');
+    res.send(renderedPage);
+});
+
 // ------------- about -------------
+app.get('/about', (req,res) => {
+    const renderedPage = renderPagesWithLayout('about.html');
+    res.send(renderedPage);
+});
 
 
+// ------------- API JSON data -------------
 app.get('/api/data', (req, res) => {
     const data = require('./data/content.json');
     res.json(data);
 });
 
+// ------------- start server -------------
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
-    
+
 });

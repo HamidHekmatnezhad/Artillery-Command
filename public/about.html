@@ -19,8 +19,8 @@
             fetch('/api/data') // request json file
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("txt-titel").innerText = data.index.tabTitle;
-                    document.getElementById("txt-subtitel").innerText = data.index.subtitel;
+                    document.getElementById("txt-titel").innerText = data.about.tabTitle;
+                    document.getElementById("txt-subtitel").innerText = data.about.subtitel;
                 })
                 .catch(error => console.error("Error loading JSON data:", error));
         });

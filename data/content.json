@@ -1,13 +1,47 @@
 {
-    "titel": "Artillery Command",
-    "subtitel": "Funker test",
-    "btnText": "Start",
-
     "navText": {
+        "titel": "Artillery Command",
         "home": "Home",
         "game": "Game",
         "leaderboard": "Leaderboard",
         "help": "Help",
         "about": "About"
+    },
+
+    "index": {
+            "tabTitle": "Artillery Command",
+            "titel": "Artillery Command",
+            "subtitel": "Funker test",
+            "btnText": "Start"
+        },
+        
+    "game": {
+        "tabTitle": "Mission Area",
+        "titel": "Mission Area",
+        "subtitel": "Radar Offline"
+    },
+
+    "leaderboard": {
+        "tabTitle": "Leaderboard",
+        "titel": "Leaderboard",
+        "subtitel": "Top Players",
+        "rank": "Rank",
+        "player": "Player",
+        "score": "Score"
+    },
+
+    "help": {
+        "tabTitle": "Help",
+        "titel": "Help",
+        "subtitel": "How to Play",
+        "content": "Hier kommt die Spielanleitung hin..."
+    },
+
+    "about": {
+        "tabTitle": "About Artillery Command",
+        "titel": "About Artillery Command",
+        "subtitel": "Game Overview",
+        "content": "Dieses Spiel wurde für das Projekt in Webprogrammierung entwickelt."
     }
+
 }
