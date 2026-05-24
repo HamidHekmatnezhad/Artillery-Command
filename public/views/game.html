@@ -10,9 +10,99 @@
     
     <div class="container mt-4">
         <h1 class="text-warning" id="txt-titel"></h1>
-        <p class="text-secondary" id="txt-subtitel"></p>
         
+        
+        <div class="row mt-4">
+                
+            <div class="col-lg-8 col-md-12 mb-3"> <!-- map 8/12 in large monitor and 12/12 in small monitor (phone)-->
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body p-0 overflow-hidden" id="canvas-container" style="min-height: 450px; background-color: black;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12 mb-3"> <!-- chat 4/12 in large monitor and 12/12 in small monitor (phone)--> 
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-success fw-bold">
+                        <span class="fw-bold" id="header-funker"></span> 
+                    </div>
+                    <div class="card-body" id="chat-history" style="overflow-y: auto; font-family: monospace;">
+                        <!-- Chat messages will be displayed here -->
+                        <p class="text-success small mb-1">[Funker]: HQ, Enemy spotted!</p>
+                        <!------------------------------------------>
+                    </div>
+                    <div class="card-footer border-secondary">
+                        <div class="input-group">
+                            <input type="text" id="chat-input" class="form-control bg-dark text-light border-secondary" placeholder="Type to Funker...">
+                            <button class="btn btn-outline-success" id="btn-send">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+            <div class="row mt-3">
+                
+                <div class="col-lg-4 col-md-12 mb-3"> <!-- artillery 6/12 in large monitor and 12/12 in small monitor (phone)-->
+                    <div class="card bg-dark border-secondary h-100">
+
+                        <!--------- tmp --------->
+                        <div class="card-body" style="background-color: darkslategrey;">
+                        </div> 
+                        <!--------- tmp --------->
+
+                    </div>
+                </div>
+
+                <div class="col-lg-8 col-md-12 mb-3">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-header border-secondary text-danger fw-bold">
+                            <span class="fw-bold" id="header-controller"></span> 
+                        </div>
+                        <div class="card-body">
+                            
+                            <div class="row h-100 m-0">
+
+                                <div class="col-6 mt-3"> 
+
+                                    <div class="mb-4">
+                                        <div class="row mb-1 m-0">
+                                            <div class="col-6">
+                                                <label class="form-label text-warning small mb-0 fw-bold" id="xaxis-label"></label>
+                                            </div>
+                                            <div class="col-6 text-end"> <span class="text-info small fw-bold" id="val-x">50</span></div>
+                                        </div>
+                                        <input type="range" id="input-x" class="form-range" min="0" max="100" value="50" oninput="document.getElementById('val-x').innerText = this.value">
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <div class="row mb-1 m-0">
+                                            <div class="col-6">
+                                                <label class="form-label text-warning small mb-0 fw-bold" id="yaxis-label"></label>
+                                            </div>
+                                            <div class="col-6 text-end"><span class="text-info small fw-bold" id="val-y">50</span></div>
+                                        </div>
+                                        <input type="range" id="input-y" class="form-range" min="0" max="100" value="50" oninput="document.getElementById('val-y').innerText = this.value">
+                                    </div>
+
+                                </div>
+                                
+                                <div class="col-6 mt-3">
+                                    <button class="btn btn-danger h-100 w-100" id="btn-fire">
+                                        <span class="fs-1 fw-bold" id="btn-fire-text"></span>
+                                    </button>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div> 
+
+        </div>
     </div>
+
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -21,11 +111,18 @@
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("txt-titel").innerText = data.game.tabTitle;
-                    document.getElementById("txt-subtitel").innerText = data.game.subtitel;
+                    document.getElementById("header-controller").innerText = data.game.controller;
+                    document.getElementById("header-funker").innerText = data.game.funker;
+                    document.getElementById("btn-fire").innerText = data.game.btnFireTxt;
+                    document.getElementById("xaxis-label").innerText = data.game.xAxis;
+                    document.getElementById("yaxis-label").innerText = data.game.yAxis;
                 })
                 .catch(error => console.error("Error loading JSON data:", error));
         });
     </script>
+
+<!-- Map Script -->
+<script src="/js/map.js"></script>
 
 </body>
 </html>

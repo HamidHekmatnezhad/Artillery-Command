@@ -18,7 +18,12 @@
     "game": {
         "tabTitle": "Mission Area",
         "titel": "Mission Area",
-        "subtitel": "Radar Offline"
+        "subtitel": "Radar Offline",
+        "controller": "Weapons Control Panel",
+        "funker": "Radio Operator",
+        "btnFireTxt": "FIRE",
+        "xAxis": "X-Axis",
+        "yAxis": "Y-Axis"
     },
 
     "leaderboard": {
