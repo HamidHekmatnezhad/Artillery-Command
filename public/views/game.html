@@ -8,11 +8,11 @@
 
     {{NAVBAR}}
     
-    <div class="container mt-4">
+    <div class="container mt-3">
         <h1 class="text-warning" id="txt-titel"></h1>
         
         
-        <div class="row mt-4">
+        <div class="row mt-3">
                 
             <div class="col-lg-8 col-md-12 mb-3"> <!-- map 8/12 in large monitor and 12/12 in small monitor (phone)-->
                 <div class="card bg-dark border-secondary h-100">
@@ -41,66 +41,86 @@
             </div>
         </div>
             
-            <div class="row mt-3">
-                
-                <div class="col-lg-4 col-md-12 mb-3"> <!-- artillery 6/12 in large monitor and 12/12 in small monitor (phone)-->
-                    <div class="card bg-dark border-secondary h-100">
-
-                        <!--------- tmp --------->
-                        <div class="card-body" style="background-color: darkslategrey;">
-                        </div> 
-                        <!--------- tmp --------->
-
-                    </div>
+        <div class="row mt-3">
+            
+            <div class="col-lg-4 col-md-12 mb-3"> <!-- artillery 6/12 in large monitor and 12/12 in small monitor (phone)-->
+                <div class="card bg-dark border-secondary h-100">
+                    <img src="./assets/images/artillery.png" alt="Artillery Unit" class="img-fluid h-100 w-100">
+                    
                 </div>
+            </div>
 
-                <div class="col-lg-8 col-md-12 mb-3">
-                    <div class="card bg-dark border-secondary h-100">
-                        <div class="card-header border-secondary text-danger fw-bold">
-                            <span class="fw-bold" id="header-controller"></span> 
-                        </div>
-                        <div class="card-body">
-                            
-                            <div class="row h-100 m-0">
+            <div class="col-lg-8 col-md-12 mb-3">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-danger fw-bold">
+                        <span class="fw-bold" id="header-controller"></span> 
+                    </div>
+                    <div class="card-body">
+                        
+                        <div class="row h-100 m-0">
 
-                                <div class="col-6 mt-3"> 
+                            <div class="col-6 mt-3"> 
 
-                                    <div class="mb-4">
-                                        <div class="row mb-1 m-0">
-                                            <div class="col-6">
-                                                <label class="form-label text-warning small mb-0 fw-bold" id="xaxis-label"></label>
-                                            </div>
-                                            <div class="col-6 text-end"> <span class="text-info small fw-bold" id="val-x">50</span></div>
+                                <div class="mb-4">
+                                    <div class="row mb-1 m-0">
+                                        <div class="col-6">
+                                            <label class="form-label text-warning small mb-0 fw-bold" id="xaxis-label"></label>
                                         </div>
-                                        <input type="range" id="input-x" class="form-range" min="0" max="100" value="50" oninput="document.getElementById('val-x').innerText = this.value">
+                                        <div class="col-6 text-end"> <span class="text-info small fw-bold" id="val-x">90</span></div>
                                     </div>
-
-                                    <div class="mb-4">
-                                        <div class="row mb-1 m-0">
-                                            <div class="col-6">
-                                                <label class="form-label text-warning small mb-0 fw-bold" id="yaxis-label"></label>
-                                            </div>
-                                            <div class="col-6 text-end"><span class="text-info small fw-bold" id="val-y">50</span></div>
-                                        </div>
-                                        <input type="range" id="input-y" class="form-range" min="0" max="100" value="50" oninput="document.getElementById('val-y').innerText = this.value">
-                                    </div>
-
+                                    <input type="range" id="input-x" class="form-range" min="35" max="145" value="90" oninput="document.getElementById('val-x').innerText = this.value">
                                 </div>
-                                
-                                <div class="col-6 mt-3">
-                                    <button class="btn btn-danger h-100 w-100" id="btn-fire">
-                                        <span class="fs-1 fw-bold" id="btn-fire-text"></span>
-                                    </button>
+
+                                <div class="mb-4">
+                                    <div class="row mb-1 m-0">
+                                        <div class="col-6">
+                                            <label class="form-label text-warning small mb-0 fw-bold" id="yaxis-label"></label>
+                                        </div>
+                                        <div class="col-6 text-end"><span class="text-info small fw-bold" id="val-y">1200</span></div>
+                                    </div>
+                                    <input type="range" id="input-y" class="form-range" min="800" max="1420" value="1200" oninput="document.getElementById('val-y').innerText = this.value">
                                 </div>
 
                             </div>
+                            
+                            <div class="col-6 mt-3">
+                                <div class="row h-100 m-0">
+                                    
+                                    <div class="col-6 p-0 pe-2">
+                                        <input type="radio" class="btn-check" name="ammoType" id="ammo-he" value="0" autocomplete="off" checked>
+                                        <label class="btn btn-outline-warning w-100 h-50 mb-2" for="ammo-he">
+                                            <span class="fw-bold">HE Shell</span>
+                                            <br>
+                                            <small>R: 20 | DMG: 100</small>
+                                        </label>
+
+                                        <input type="radio" class="btn-check" name="ammoType" id="ammo-shrapnel" value="1" autocomplete="off">
+                                        <label class="btn btn-outline-warning w-100 h-50" for="ammo-shrapnel">
+                                            <span class="fw-bold">Shrapnel</span>
+                                            <br>
+                                            <small>R: 50 | DMG: 40</small>
+                                        </label>
+                                    </div>
+
+                                    <div class="col-6 p-0">
+                                        <button class="btn btn-danger h-100 w-100" id="btn-fire">
+                                            <span class="fs-4 fw-bold" id="btn-fire-text">FIRE</span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
 
                         </div>
+
                     </div>
                 </div>
-            </div> 
+            </div>
+        </div> 
 
-        </div>
+
+        <!-- TODO: add Table for Artillery and Settings -->
+
     </div>
 
 
@@ -121,8 +141,9 @@
         });
     </script>
 
-<!-- Map Script -->
+<!-- Scripts -->
 <script src="/js/map.js"></script>
+<script src="/js/enemy.js"></script>
 
 </body>
 </html>
