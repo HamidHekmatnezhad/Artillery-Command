@@ -225,6 +225,11 @@ function impact(targetX, targetY, ammoType) {
             if(e.isDestroyed()) {
                 playerScore += e.scoreValue;
                 enemies.splice(i, 1);
+
+                // show Score
+                let scoreText = document.getElementById('txt-score-point');
+                scoreText.innerText = playerScore;
+
             }
         }
     }

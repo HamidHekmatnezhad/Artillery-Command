@@ -59,11 +59,8 @@ class Enemy {
                 // Armored Car
                 this.health = 50 * this.multiplier;
                 break;
-
-            default:
-                this.scoreValue = this.health * this.multiplier;
         }
-
+        this.scoreValue = this.health * this.multiplier;
     }
 
     takeDamage(damage) {
