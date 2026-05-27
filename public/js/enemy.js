@@ -7,6 +7,8 @@ class Enemy {
         this.enemyType = enemyType;  
         this.iconSize = 15 * this.multiplier;
         this.scoreValue = 1;
+        this.size = "";
+        this.name = "";
 
         while (true) {
             const randomX = Math.floor(Math.random() * (maxX - 80)) + 40; // Ensure enemy is at least 20px from the edge
@@ -19,6 +21,19 @@ class Enemy {
             }
         }
 
+        // Size 
+        switch(this.multiplier){
+            case 1:
+                this.size = "Small";
+                break;
+            case 2:
+                this.size = "Medium";
+                break;
+            case 3:
+                this.size = "Large";
+                break;
+        }
+
         // Grid Location
         const colIndex = Math.floor(this.X / (maxX / cols));
         const rowIndex = Math.floor(this.Y / (maxY / rows));
@@ -26,37 +41,37 @@ class Enemy {
 
         switch (enemyType) {
             case 0:
-                // Infantry
+                this.name = "Infantry";
                 this.health = 10 * this.multiplier;
                 break;
 
             case 1:
-                // Tank
+                this.name = "Tank";
                 this.health = 100 * this.multiplier;
                 break;
 
             case 2:
-                // Base
+                this.name = "Base";
                 this.health = 500 * this.multiplier;
                 break;
 
             case 3:
-                // Truck
+                this.name = "Truck";
                 this.health = 30 * this.multiplier;
                 break;
 
             case 4:
-                // APC
+                this.name = "APC";
                 this.health = 70 * this.multiplier;
                 break;
 
             case 5:
-                // Outpost
+                this.name = "Outpost";
                 this.health = 20 * this.multiplier;
                 break;
 
             case 6:
-                // Armored Car
+                this.name = "Armored Car";
                 this.health = 50 * this.multiplier;
                 break;
         }

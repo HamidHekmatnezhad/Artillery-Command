@@ -9,5 +9,16 @@
     background-color: #495057; 
 }
 
+#canvas-container{
+    min-height: 450px; 
+    background-color: black;
+}
+
 /* for canvas */
 canvas { display: block; }
+
+.enemy-icon-in-table {
+    width: 24px; 
+    height: 24px; 
+    object-fit: contain;
+}

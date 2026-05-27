@@ -16,7 +16,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             
-            fetch('/api/data') // request json file
+            fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("txt-titel").innerText = data.index.tabTitle;

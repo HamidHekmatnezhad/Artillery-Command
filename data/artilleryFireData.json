@@ -1,0 +1,11 @@
+{
+    "artilleryInfo":[
+        { "range": 500,  "mil": 1450},
+        { "range": 1000, "mil": 1350},
+        { "range": 1500, "mil": 1210},
+        { "range": 2000, "mil": 1100},
+        { "range": 2500, "mil": 980 },
+        { "range": 3000, "mil": 800 }
+]
+
+}

@@ -62,8 +62,12 @@ app.get('/about', (req,res) => {
 
 
 // ------------- API JSON data -------------
-app.get('/api/data', (req, res) => {
+app.get('/api/content', (req, res) => {
     const data = require('./data/content.json');
+    res.json(data);
+});
+app.get('/api/artilleryFireData', (req, res) => {
+    const data = require('./data/artilleryFireData.json');
     res.json(data);
 });
 

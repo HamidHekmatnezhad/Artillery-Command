@@ -14,15 +14,17 @@ let bgMap;
 
 let enemies = [];
 let enemyIcons = [];
-let limitEnemies = 10;
+let enemyIconsSrc = [];
+let limitEnemies = 6;
 
 let friendlyUnitIcon;
 let friendlyUnitIconSize;
 let friendlyUnitX;
 let friendlyUnitY;
 let friendlyUnitRadius;
+let friendlyUnitHealth = 1000;
 
-let hitbox = true;
+let hitbox = false;
 let gameStarted = false;
 let gameOver = false;
 let gameWon = false;
@@ -37,11 +39,13 @@ let currentAngle = 90;
 let currentMil = 1000;
 let aimLineX, aimLineY, aimLineColor;
 let lineLength = 1500;
-let aimLineDebug = true;
+let aimLineDebug = false;
 let positionX, positionY;
 
 let explosions = [];
 let timeToFlight = 3000;
+
+let debugBlockToMeters = false;
 
 function preload() {
     // Load background map
@@ -51,13 +55,17 @@ function preload() {
     friendlyUnitIcon = loadImage('/assets/images/friendly.png');
 
     // Load enemy icons
-    enemyIcons[0] = loadImage('/assets/images/infantry.png');
-    enemyIcons[1] = loadImage('/assets/images/tank.png');
-    enemyIcons[2] = loadImage('/assets/images/base.png');
-    enemyIcons[3] = loadImage('/assets/images/truck.png');
-    enemyIcons[4] = loadImage('/assets/images/apc.png');
-    enemyIcons[5] = loadImage('/assets/images/outpost.png');
-    enemyIcons[6] = loadImage('/assets/images/armoredCar.png');
+
+    enemyIconsSrc[0] = '/assets/images/infantry.png';
+    enemyIconsSrc[1] = '/assets/images/tank.png';
+    enemyIconsSrc[2] = '/assets/images/base.png';
+    enemyIconsSrc[3] = '/assets/images/truck.png';
+    enemyIconsSrc[4] = '/assets/images/apc.png';
+    enemyIconsSrc[5] = '/assets/images/outpost.png';
+    enemyIconsSrc[6] = '/assets/images/armoredCar.png';
+    for(let i = 0; i < enemyIconsSrc.length; i++){
+        enemyIcons[i] = loadImage(enemyIconsSrc[i]);
+    }
 
 }
 
@@ -210,6 +218,11 @@ function impact(targetX, targetY, ammoType) {
     let d = dist(targetX, targetY, friendlyUnitX, friendlyUnitY);
     if(d < friendlyUnitRadius + blastRadius[ammoType]) {
         gameOver = true;
+        friendlyUnitHealth -= damage[ammoType];
+        scoreValue -= 500;
+        if(friendlyUnitHealth <= 0) {
+            gameWon = true;
+        }
         // TODO: play explosion sound
         // TODO: log in chat
     }
@@ -262,6 +275,47 @@ function fireArtillery() {
 
 }
 
+function resetGame() {} // TODO
+
+function loadArtilleryTable() {
+    // call json file
+    fetch('/api/artilleryFireData')
+    .then(response => response.json())
+    .then(data => {
+        let elementTbody = document.getElementById('artillery-table-info');
+        if(!elementTbody) return;
+        elementTbody.innerHTML = '';
+        
+        data.artilleryInfo.map((item) => {
+            let elementTr = document.createElement('tr');
+            elementTr.innerHTML = `
+                <td>${item.range}</td>
+                <td>${item.mil}</td>
+                `;
+            elementTbody.appendChild(elementTr);
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
+function laodEnemyTable() {
+    let tbody = document.getElementById('enemy-info-table');
+    tbody.innerHTML = '';
+    for(e of enemies){
+        let tr = document.createElement('tr');
+        tr.innerHTML = `
+        <td><img class="enemy-icon-in-table" src="${enemyIconsSrc[e.enemyType]}" alt="e.name"></td>
+        <td>${e.gridLocation}</td>
+        <td>${e.health}</td>
+        <td>${e.size}</td>
+        <td>${e.scoreValue}</td>`
+
+        tbody.appendChild(tr);
+    }   
+}
+
 function setup() {
     // find the container div for the canvas
     container = document.getElementById('canvas-container');
@@ -290,11 +344,48 @@ function setup() {
     aimLineY = height + 300;
     aimLineColor = color(255, 0, 0);
 
+    loadArtilleryTable();
+
+    // btn Fire 
     let btnFire = document.getElementById('btn-fire');
     let ammoType = 0;
     if (btnFire) {
         btnFire.addEventListener('click', fireArtillery);
     }
+
+    // switch aim debug line
+    let debugAim = document.getElementById('switch-debug-aim');
+    if(debugAim){
+        debugAim.addEventListener('change', function() {
+            aimLineDebug = this.checked;
+        });
+    }
+
+    // switch hitbox
+    let hitboxSwitch = document.getElementById('switch-hitbox');
+    if(hitboxSwitch){
+        hitboxSwitch.addEventListener('change', function() {
+            hitbox = this.checked;
+        });
+    }
+    
+    // btn reset game\
+    let btnReset = document.getElementById('btn-reset');
+    if (btnReset) {
+        btnReset.addEventListener('click', function() {
+            resetGame();
+        });
+    }
+
+    if(debugBlockToMeters){
+        // block 132m and pixel 3.59
+        let maxPixelRange = dist(aimLineX, aimLineY, 0, 0);
+        let metersPerPixel = 3000 / maxPixelRange;
+        let blockMeters = cellW * metersPerPixel;
+        console.log(`[SCALE] 1 Pixel = ${metersPerPixel.toFixed(2)} Meters`);
+        console.log(`[SCALE] 1 Map Block (${Math.round(cellW)}px) = ${Math.round(blockMeters)} Meters`);
+    }
+
 }
 
 function draw() {
@@ -316,6 +407,7 @@ function draw() {
     showFriendlyUnit();
     showEnemies();
     showExplosions();
+    laodEnemyTable();
 }
 
 function windowResized() {
