@@ -1,0 +1,103 @@
+{
+    "startGame": [
+        "HQ HQ! we need support!",
+        "HQ can you hear me?"
+    ],
+
+    "startedGame": [
+        "We see enemy activity in the area. we are at {loc} ."
+    ],
+
+    "reportFriendlyLoc":[
+        "we are at {loc} ."
+    ],
+
+    "enemySpot":[
+        "at {loc} is {enemy}.",
+        "we have {enemy} at grid {loc}.",
+        "Visual on {enemy} in sector {loc}.",
+        "Be advised, {enemy} spotted holding position at {loc}.",
+        "Contact! {enemy} located at coordinates {loc}.",
+        "Target acquired. We see {enemy} moving through {loc}.",
+        "Recon reports {enemy} stationed at {loc}.",
+        "Warning: {enemy} detected in area {loc}.",
+        "Hostile forces confirmed. {enemy} at grid {loc}.",
+        "Requesting fire artillery. {enemy} pinpointed at {loc}."
+
+    ],
+
+
+    "enemyHit":[
+        "GOOD SHOT!, {enemy} at {loc} damaged.",
+        "Target Hit, {enemy} at {loc}."
+    ],
+
+    "enemyDestroyed":[
+        "Target neutralized. {enemy} at {loc}",
+        "{enemy} destroyed at {loc}."
+    ],
+
+    "enemyMiss":[
+        "Miss!"
+    ],
+
+    "enemyType":[
+        ["a small infantry squad", "a couple of soldiers", "an infantry battalion"],
+        ["a tank", "multiple tanks", "a column of tanks"],
+        ["a small base", "a large base", "a huge base"],
+        ["a truck", "a couple of trucks", "a convoy of trucks"],
+        ["an APC", "multiple APCs", "a group of APCs"],
+        ["a small outpost", "a medium outpost", "a large outpost"],
+        ["an armored car", "several armored cars", "a group of armored cars"]
+    ],
+
+    "shotFired":[
+        "Rounds complete. Wait for impact",
+        "Shot out!"
+    ],
+
+    "ammoChanged":[
+        "loading {ammo}",
+        "Switching to {ammo}"
+    ],
+
+    "gameOver":[
+
+    ],
+
+    "friendlyHit":[
+
+    ],
+
+    "unknownCommond":[
+        "Command not recognized. Say again?"
+    ],
+
+    "noAction":[
+
+    ],
+
+    "sender":[
+        "Radio Operator",
+        "HQ"
+    ],
+
+    "operatorHints":[
+
+    ],
+
+    "keyword":[
+        ["copy that", 1001],
+        ["copythat", 1001],
+        ["ja", 1001],
+        ["yes", 1001],
+        ["call again", 1002],
+        ["callagain", 1002],
+        ["again", 1002],
+        ["repeat", 1002],
+        ["help", 1003]
+
+    ]
+
+    
+}

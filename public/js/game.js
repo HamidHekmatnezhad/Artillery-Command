@@ -29,10 +29,14 @@ let gameStarted = false;
 let gameOver = false;
 let gameWon = false;
 let playerScore = 0;
+let chatInputElement;
+let btnSendChatElement;
+let requestPlayer = false;
 
 let startTime;
-let minTime = 2000;
-let maxTime = 4000; //30000;
+let minTime = 10000; // 10 seconds
+let maxTime = 60000; // 60 seconds
+let firstTime = 2000; // 2 seconds
 let rdmTime;
 
 let currentAngle = 90;
@@ -316,6 +320,23 @@ function laodEnemyTable() {
     }   
 }
 
+function sendPalyerMessage() {
+    let msg = chatInputElement.value;
+
+    if(msg.trim() != "") {
+        let commandResult = radio.handleMessagePlayer(msg);
+
+        if(commandResult == true) {
+            if(!gameStarted) {
+                gameStarted = true;
+                startTime = millis();
+                radio.handleMessageOperator("startedGame") // TODO friendly unit need class for grid location and more
+            }
+        }
+        chatInputElement.value = "";
+    }
+}
+
 function setup() {
     // find the container div for the canvas
     container = document.getElementById('canvas-container');
@@ -332,7 +353,7 @@ function setup() {
     drawMap();
 
     startTime = millis();
-    rdmTime = minTime;
+    rdmTime = firstTime;
 
     // create friendly units 
     friendlyUnitX = rdm(100, canvasWidth - 100);
@@ -345,6 +366,11 @@ function setup() {
     aimLineColor = color(255, 0, 0);
 
     loadArtilleryTable();
+
+    // create radio system with user name
+    radio = new RadioSystem("Player"); // TODO: get user name from history.json
+    chatInputElement = document.getElementById('chat-input');
+    btnSendChatElement = document.getElementById('btn-send');
 
     // btn Fire 
     let btnFire = document.getElementById('btn-fire');
@@ -369,11 +395,24 @@ function setup() {
         });
     }
     
-    // btn reset game\
+    // btn reset game
     let btnReset = document.getElementById('btn-reset');
     if (btnReset) {
         btnReset.addEventListener('click', function() {
             resetGame();
+        });
+    }
+
+    // btn send chat
+    if(btnSendChatElement) {
+        btnSendChatElement.addEventListener('click', sendPalyerMessage);
+    }
+
+    if(chatInputElement) {
+        chatInputElement.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                sendPalyerMessage();
+            }
         });
     }
 
@@ -393,21 +432,25 @@ function draw() {
 
     calculateAimPosition();
 
-    if (millis() - startTime > rdmTime && !gameOver) {
-        if (enemies.length < limitEnemies) {
-            let enemyRndmType = rdm(0, 6); // Random enemy type between 0 and 6
-            let multiplierRndm = rdm(1, 3); // Random multiplier between 1 and 3
+    if(gameStarted && !gameOver) {
+        if ((millis() - startTime > rdmTime && !gameOver) || (requestPlayer)) {
+            if (enemies.length < limitEnemies) {
+                let enemyRndmType = rdm(0, 6); // Random enemy type between 0 and 6
+                let multiplierRndm = rdm(1, 3); // Random multiplier between 1 and 3
 
-            enemies.push(new Enemy(canvasWidth, canvasHeight, enemyRndmType, friendlyUnitX, friendlyUnitY, friendlyUnitRadius, multiplierRndm, cols, rows));
+                enemies.push(new Enemy(canvasWidth, canvasHeight, enemyRndmType, friendlyUnitX, friendlyUnitY, friendlyUnitRadius, multiplierRndm, cols, rows));
+            }
+            startTime = millis(); 
+            rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
+            requestPlayer = false;
         }
-        startTime = millis();
-        rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
     }
 
     showFriendlyUnit();
     showEnemies();
     showExplosions();
     laodEnemyTable();
+
 }
 
 function windowResized() {

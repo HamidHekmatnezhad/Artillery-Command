@@ -70,6 +70,11 @@ app.get('/api/artilleryFireData', (req, res) => {
     const data = require('./data/artilleryFireData.json');
     res.json(data);
 });
+app.get('/api/radioOperator', (req, res) => {
+    const data = require('./data/radioOperator.json');
+    res.json(data);
+});
+
 
 // ------------- start server -------------
 app.listen(port, () => {

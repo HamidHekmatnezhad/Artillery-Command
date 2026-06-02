@@ -32,9 +32,11 @@
                     <div class="card-header border-secondary text-success fw-bold">
                         <span class="fw-bold" id="header-funker"></span> 
                     </div>
-                    <div class="card-body" id="chat-history" style="overflow-y: auto; font-family: monospace;">
+                    <div class="card-body chat-history-container overflow-auto custom-height">
                         <!-- Chat messages will be displayed here -->
-                        <p class="text-success small ">[Funker]: HQ, Enemy spotted!</p>
+                        <div class="small" id="chat-box">
+                        <p class="text-secondary">[Funker]: HQ, Enemy spotted!</p>  
+                        </div>           
                         <!------------------------------------------>
                     </div>
                     <div class="card-footer border-secondary">
@@ -97,17 +99,17 @@
 
                                         <input type="radio" class="btn-check" name="ammoType" id="ammo-he" value="0" autocomplete="off" checked>
                                         <label class="btn btn-outline-warning w-100 h-50 mb-1" for="ammo-he">
-                                            <span class="fw-bold">HE Shell</span>
+                                            <span class="fw-bold" id="ammo-1">HE Shell</span>
                                             <br>
-                                            <small>R: 20 | DMG: 100</small>
+                                            <small id="ammo-1-info">R: 20 | DMG: 100</small>
                                         </label>
                                         
                                         <!-- 2. Ammo Shrapnel-->
                                         <input type="radio" class="btn-check" name="ammoType" id="ammo-shrapnel" value="1" autocomplete="off">
                                         <label class="btn btn-outline-warning w-100 h-50 mt-1" for="ammo-shrapnel">
-                                            <span class="fw-bold">Shrapnel</span>
+                                            <span class="fw-bold " id="ammo-2">Shrapnel</span>
                                             <br>
-                                            <small>R: 50 | DMG: 40</small>
+                                            <small id="ammo-2-info">R: 50 | DMG: 40</small>
                                         </label>
 
 
@@ -246,8 +248,9 @@
     </script>
 
 <!-- Scripts -->
-<script src="/js/map.js"></script>
+<script src="/js/game.js"></script>
 <script src="/js/enemy.js"></script>
+<script src="/js/radioSystem.js"></script>
 
 </body>
 </html>
