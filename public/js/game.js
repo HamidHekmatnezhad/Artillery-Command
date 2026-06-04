@@ -17,27 +17,24 @@ let enemyIcons = [];
 let enemyIconsSrc = [];
 let limitEnemies = 6;
 
-let friendlyUnitIcon;
-let friendlyUnitIconSize;
-let friendlyUnitX;
-let friendlyUnitY;
-let friendlyUnitRadius;
-let friendlyUnitHealth = 1000;
+let friendlyUnit, friendlyUnitIcon;
 
 let hitbox = false;
 let gameStarted = false;
 let gameOver = false;
-let gameWon = false;
 let playerScore = 0;
 let chatInputElement;
 let btnSendChatElement;
-let requestPlayer = false;
+let requestPlayer = false; // TODO: logic
 
 let startTime;
 let minTime = 10000; // 10 seconds
 let maxTime = 60000; // 60 seconds
 let firstTime = 2000; // 2 seconds
 let rdmTime;
+let noActionTimer = 120000; // 2 minutes
+let noActionStartTime;
+let reloadTime = 4000; // 5 seconds
 
 let currentAngle = 90;
 let currentMil = 1000;
@@ -48,6 +45,9 @@ let positionX, positionY;
 
 let explosions = [];
 let timeToFlight = 3000;
+
+let btnFire, debugAim, hitboxSwitch, btnReset;
+
 
 let debugBlockToMeters = false;
 
@@ -123,13 +123,11 @@ function drawMap() {
     }
 }
 
-function keyPressed() {} //TODO
-
 function showFriendlyUnit() {
     let tColor = color(0, 255, 0);
     tint(tColor);
     imageMode(CENTER);
-    image(friendlyUnitIcon, friendlyUnitX, friendlyUnitY, friendlyUnitIconSize, friendlyUnitIconSize);
+    image(friendlyUnitIcon, friendlyUnit.X, friendlyUnit.Y, friendlyUnit.iconSize, friendlyUnit.iconSize);
     imageMode(CORNER);
     noTint();
 
@@ -138,7 +136,7 @@ function showFriendlyUnit() {
         noFill();
         stroke(tColor);
         strokeWeight(1);
-        circle(friendlyUnitX, friendlyUnitY, friendlyUnitRadius*2);
+        circle(friendlyUnit.X, friendlyUnit.Y, friendlyUnit.radius*2);
         noStroke();
     }
 
@@ -196,7 +194,7 @@ function calculateAimPosition() {
         fill(255);
         textSize(12);
         textAlign(LEFT, BOTTOM);
-        text(`AIM: ${Math.round(positionX)}, ${Math.round(positionY)}`, positionX + 10, positionY - 10);
+        text(`px: ${Math.round(positionX)}, ${Math.round(positionY)}`, positionX + 10, positionY - 10);
     }
 }
 
@@ -216,62 +214,73 @@ function showExplosions() {
 function impact(targetX, targetY, ammoType) {
     let blastRadius = [15, 30];
     let damage = [100, 40];
-    let hitSomething = false;
 
     // friendly fire
-    let d = dist(targetX, targetY, friendlyUnitX, friendlyUnitY);
-    if(d < friendlyUnitRadius + blastRadius[ammoType]) {
+    let d = dist(targetX, targetY, friendlyUnit.X, friendlyUnit.Y);
+    if(d < friendlyUnit.radius + blastRadius[ammoType]) {
         gameOver = true;
-        friendlyUnitHealth -= damage[ammoType];
+        friendlyUnit.takeDamage(damage[ammoType]);
         scoreValue -= 500;
-        if(friendlyUnitHealth <= 0) {
-            gameWon = true;
+        if(friendlyUnit.isDestroyed()) {
+            gameOver = true;
         }
         // TODO: play explosion sound
         // TODO: log in chat
     }
 
+    let mis = true;
     for(let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         let d = dist(targetX, targetY, e.X, e.Y);
         if(d < blastRadius[ammoType] + e.radius) {
-            hitSomething = true;
             let finalDamage = damage[ammoType] + rdm(0, 20);
             e.takeDamage(finalDamage);
+            mis = false;
 
             if(e.isDestroyed()) {
                 playerScore += e.scoreValue;
+                radio.handleMessageOperator("enemyDestroyed", e.gridLocation, e.enemyType, e.multiplier);
                 enemies.splice(i, 1);
 
                 // show Score
                 let scoreText = document.getElementById('txt-score-point');
                 scoreText.innerText = playerScore;
-
             }
+            else (
+                radio.handleMessageOperator("enemyHit", e.gridLocation, e.enemyType, e.multiplier)
+                // TODO: explosion Sound
+            )
         }
     }
+    if(mis) {
+        radio.handleMessageOperator("enemyMissShot");
+    }
+
     explosions.push({
         x: targetX,
         y: targetY,
         radius: blastRadius[ammoType],
         alpha: 255
     });
-
-    if(hitSomething) {
-        // TODO: play explosion sound
-        // TODO: log in chat
-        hitSomething = false;
-    }
 }
 
 function fireArtillery() {
-    // if (gameOver || gameStarted) return;
 
     let selectedAmmo = document.querySelector('input[name="ammoType"]:checked').value;
     let ammoType = parseInt(selectedAmmo);
 
     let targetX = positionX;
     let targetY = positionY;
+
+    noActionStartTime = millis();
+
+    radio.handleMessageHq("shotFired", null);
+
+    btnFire.disabled = true;
+    radio.handleMessageHq("reloading", null);
+    setTimeout(() => {
+        btnFire.disabled = false;
+    }, reloadTime);
 
     setTimeout(() => {
         impact(targetX, targetY, ammoType);
@@ -329,11 +338,45 @@ function sendPalyerMessage() {
         if(commandResult == true) {
             if(!gameStarted) {
                 gameStarted = true;
+                btnFire.disabled = false;
                 startTime = millis();
-                radio.handleMessageOperator("startedGame") // TODO friendly unit need class for grid location and more
+                radio.handleMessageOperator("startedGame"); 
+                radio.handleMessageOperator("reportFriendlyLoc", friendlyUnit.gridLocation);
             }
         }
         chatInputElement.value = "";
+    }
+}
+
+function createEnemy() {
+    let enemyRndmType = rdm(0, 6); // Random enemy type between 0 and 6
+    let multiplierRndm = rdm(1, 3); // Random multiplier between 1 and 3
+    let tmp = new Enemy(canvasWidth, canvasHeight, enemyRndmType, friendlyUnit.X, friendlyUnit.Y, friendlyUnit.radius, multiplierRndm, cols, rows);
+    enemies.push(tmp);
+    // Operator Log
+    radio.handleMessageOperator("enemySpot", tmp.gridLocation, tmp.enemyType, tmp.multiplier);
+    delete tmp;
+}
+
+function noActionCheck() {
+    if(gameStarted && !gameOver) {
+        if(millis() - noActionStartTime > noActionTimer) {
+            radio.handleMessageOperator("noAction");
+            noActionStartTime = millis();
+        }
+    }
+}
+
+function generateEnemies() {
+    if(gameStarted && !gameOver) {
+        if ((millis() - startTime > rdmTime && !gameOver) || (requestPlayer)) {
+            if (enemies.length < limitEnemies) {
+                createEnemy();
+            }
+            startTime = millis(); 
+            rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
+            requestPlayer = false;
+        }
     }
 }
 
@@ -354,12 +397,10 @@ function setup() {
 
     startTime = millis();
     rdmTime = firstTime;
+    noActionStartTime = millis();
 
     // create friendly units 
-    friendlyUnitX = rdm(100, canvasWidth - 100);
-    friendlyUnitY = rdm(100, canvasHeight - 100);
-    friendlyUnitRadius = 30;
-    friendlyUnitIconSize = 30;
+    friendlyUnit = new FriendlyUnit(canvasWidth, canvasHeight, cols, rows);
 
     aimLineX = width / 2;
     aimLineY = height + 300;
@@ -371,16 +412,20 @@ function setup() {
     radio = new RadioSystem("Player"); // TODO: get user name from history.json
     chatInputElement = document.getElementById('chat-input');
     btnSendChatElement = document.getElementById('btn-send');
+    radio.loadJsonData().then(() => {
+        radio.handleMessageOperator("startGame");
+    });
 
     // btn Fire 
-    let btnFire = document.getElementById('btn-fire');
+    btnFire = document.getElementById('btn-fire');
     let ammoType = 0;
     if (btnFire) {
         btnFire.addEventListener('click', fireArtillery);
     }
+    btnFire.disabled = true; 
 
     // switch aim debug line
-    let debugAim = document.getElementById('switch-debug-aim');
+    debugAim = document.getElementById('switch-debug-aim');
     if(debugAim){
         debugAim.addEventListener('change', function() {
             aimLineDebug = this.checked;
@@ -388,7 +433,7 @@ function setup() {
     }
 
     // switch hitbox
-    let hitboxSwitch = document.getElementById('switch-hitbox');
+    hitboxSwitch = document.getElementById('switch-hitbox');
     if(hitboxSwitch){
         hitboxSwitch.addEventListener('change', function() {
             hitbox = this.checked;
@@ -396,7 +441,7 @@ function setup() {
     }
     
     // btn reset game
-    let btnReset = document.getElementById('btn-reset');
+    btnReset = document.getElementById('btn-reset');
     if (btnReset) {
         btnReset.addEventListener('click', function() {
             resetGame();
@@ -432,19 +477,8 @@ function draw() {
 
     calculateAimPosition();
 
-    if(gameStarted && !gameOver) {
-        if ((millis() - startTime > rdmTime && !gameOver) || (requestPlayer)) {
-            if (enemies.length < limitEnemies) {
-                let enemyRndmType = rdm(0, 6); // Random enemy type between 0 and 6
-                let multiplierRndm = rdm(1, 3); // Random multiplier between 1 and 3
-
-                enemies.push(new Enemy(canvasWidth, canvasHeight, enemyRndmType, friendlyUnitX, friendlyUnitY, friendlyUnitRadius, multiplierRndm, cols, rows));
-            }
-            startTime = millis(); 
-            rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
-            requestPlayer = false;
-        }
-    }
+    generateEnemies();
+    noActionCheck();
 
     showFriendlyUnit();
     showEnemies();
@@ -461,3 +495,5 @@ function windowResized() {
     showFriendlyUnit();
     showEnemies();
 }
+
+// TODO: History

@@ -4,7 +4,6 @@ class RadioSystem {
         this.chatBox = document.getElementById("chat-box");
         this.history = []; // 0: typeSender, 1: mag(null), 2:msgCode, 3: category, 4: loc, 5: Type(enmey=0-6, Friendly=10, player=11 und null), 6: multiplier= 0,1,2 und null, 7: rowHtml
         this.data = null;
-        this.loadJsonData();
         this.userName = userName;
         this.delayMsg = 1200;
 
@@ -28,7 +27,7 @@ class RadioSystem {
         this.chatBox.parentElement.scrollTop = this.chatBox.parentElement.scrollHeight;
     }
 
-    formatMessage(category, loc, type, mul) {
+    formatMessage(category, loc, type, mul, ammoType) {
 
         let message = this.data[category];
         let rdm = this.rdmNumInt(message.length - 1);
@@ -40,22 +39,27 @@ class RadioSystem {
         }
 
         if(type != null && type >= 0 && type <= 6) {
-            let enemyHtml = `<span class="text-info">${this.data.enemyType[type][mul]}</span>`;
+            let enemyHtml = `<span class="text-info">${this.data.enemyType[type][mul-1]}</span>`;
             text = text.replace("{enemy}", enemyHtml);
+        }
+
+        // TODO: ammoType
+        if(ammoType != null) {
+            let ammoHtml = `<span class="text-info">${this.data.ammoType[ammoType]}</span>`;
+            text = text.replace("{ammo}", ammoHtml);
         }
 
         return text;
     }
 
-    logMessage(typeSender, msg, msgCode, category, loc, type, mul) {
+    logMessage(typeSender, msg, msgCode, category, loc, type, mul, ammoType) {
         let finalMsg = "";
         if(!msg) {
-            finalMsg = this.formatMessage(category, loc, type, mul);
+            finalMsg = this.formatMessage(category, loc, type, mul, ammoType);
         }
         else {
             finalMsg = msg;
         }
-
 
         let rowHtml = "";
 
@@ -64,26 +68,30 @@ class RadioSystem {
                 rowHtml = `<p class="text-secondary">[${this.userName}]: ${finalMsg}</p>`;
                 break;
             case 1: // HQ
-                rowHtml = `<p class="text-warning mb-1">[HQ]: ${finalMsg}</p>`;
+                rowHtml = `<p class="text-warning mb-1">[${this.data.sender[1]}]: ${finalMsg}</p>`;
                 break;
             case 2: // Radio Operator
-                rowHtml = `<p class="text-success mb-1">[RadioOperator]: ${finalMsg}</p>`;
+                rowHtml = `<p class="text-success mb-1">[${this.data.sender[0]}]: ${finalMsg}</p>`;
                 break;
         }
         this.history.push([typeSender, msg,  msgCode, category, loc, type, mul, rowHtml]);
 
-        if(typeSender == 0) {
-            this.show(rowHtml);
-        } 
-        else {
+        if(typeSender == 2) {
             setTimeout(() => {
                 this.show(rowHtml);
             }, this.delayMsg);
         }
+        else {
+            this.show(rowHtml);
+        } 
     }
 
     handleMessageOperator(category, loc=null, type=null, mul=null) {
-        this.logMessage(2, null, null, category, loc, type, mul)
+        this.logMessage(2, null, null, category, loc, type, mul, null);
+    }
+
+    handleMessageHq(category, ammoType=null) {
+        this.logMessage(1, null, null, category, null, null, null, ammoType);
     }
 
     handleMessagePlayer(userInput) {
@@ -93,7 +101,7 @@ class RadioSystem {
 
         let commandFound = false;
 
-        this.logMessage(0, userInput, 1000, null, null, 11, null) // show message from Player
+        this.logMessage(0, userInput, 1000, null, null, 11, null, null) // show message from Player
 
         for(let kw of this.data.keyword){
 
@@ -118,7 +126,7 @@ class RadioSystem {
                             }
                         }
                         if(!pmsg){
-                            this.logMessage(2, "no previous Request", msgCode, "", "", null, null)
+                            this.logMessage(2, "no previous Request", msgCode, "", "", null, null, null);
                         }
                         break;
 
@@ -131,7 +139,7 @@ class RadioSystem {
             }
         }
         if(!commandFound){
-            this.logMessage(2, null, null, "unknownCommond", null, null, null)
+            this.logMessage(2, null, null, "unknownCommond", null, null, null, null);
         }
     }
 

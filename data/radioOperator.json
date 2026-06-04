@@ -5,11 +5,11 @@
     ],
 
     "startedGame": [
-        "We see enemy activity in the area. we are at {loc} ."
+        "We see enemy activity in the area."
     ],
 
     "reportFriendlyLoc":[
-        "we are at {loc} ."
+        "we are at {loc}."
     ],
 
     "enemySpot":[
@@ -37,7 +37,7 @@
         "{enemy} destroyed at {loc}."
     ],
 
-    "enemyMiss":[
+    "enemyMissShot":[
         "Miss!"
     ],
 
@@ -69,12 +69,18 @@
 
     ],
 
+    "reloading":[
+        "Reloading...",
+        "Reloading, stand by...",
+        "Loading new round!"
+    ],
+
     "unknownCommond":[
         "Command not recognized. Say again?"
     ],
 
     "noAction":[
-
+        "No action taken."
     ],
 
     "sender":[
@@ -82,7 +88,7 @@
         "HQ"
     ],
 
-    "operatorHints":[
+    "operatorHelp":[
 
     ],
 
@@ -91,11 +97,28 @@
         ["copythat", 1001],
         ["ja", 1001],
         ["yes", 1001],
+
         ["call again", 1002],
         ["callagain", 1002],
         ["again", 1002],
         ["repeat", 1002],
-        ["help", 1003]
+
+        ["help", 1003],
+
+        ["your location", 1004],
+        ["where are you", 1004],
+        ["what is your location", 1004],
+        ["what's your location", 1004],
+        ["report friendly location", 1004],
+        ["reportfriendlylocation", 1004],
+        ["friendly location", 1004],
+
+        ["report enemy spot", 1005],
+        ["report enemies spot", 1005],
+        ["reportenemyspot", 1005],
+        ["reportenemiesspot", 1005],
+        ["enemy spot", 1005],
+        ["enemies spot", 1005]
 
     ]
 

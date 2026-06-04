@@ -60,7 +60,6 @@ app.get('/about', (req,res) => {
     res.send(renderedPage);
 });
 
-
 // ------------- API JSON data -------------
 app.get('/api/content', (req, res) => {
     const data = require('./data/content.json');
@@ -75,6 +74,11 @@ app.get('/api/radioOperator', (req, res) => {
     res.json(data);
 });
 
+// ------------- 404 -------------
+app.use((req, res) => {
+    const renderedPage = renderPagesWithLayout('404.html');
+    res.status(404).send(renderedPage);
+});
 
 // ------------- start server -------------
 app.listen(port, () => {

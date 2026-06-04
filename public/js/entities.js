@@ -1,3 +1,33 @@
+class FriendlyUnit {
+    constructor(maxX, maxY, cols, rows) {
+        
+        this.radius = 30;
+        this.health = 2000;
+        this.iconSize = 30;
+
+        this.X = Math.floor(Math.random() * (maxX - 80)) + 40; // Ensure enemy is at least 20px from the edge;
+        this.Y = Math.floor(Math.random() * (maxY - 80)) + 40; // Ensure enemy is at least 20px from the edge;
+        
+        // Grid Location
+        const colIndex = Math.floor(this.X / (maxX / cols));
+        const rowIndex = Math.floor(this.Y / (maxY / rows));
+        this.gridLocation = String.fromCharCode(65 + rowIndex) + colIndex; // e.g., "A0", "B3", etc.
+    }
+
+    takeDamage(damage) {
+        this.health -= damage;
+        if (this.health < 0) {
+            this.health = 0;
+        }
+    }
+
+    isDestroyed() {
+        return this.health <= 0;
+    }
+
+}
+
+
 class Enemy {
     constructor(maxX, maxY, enemyType, friendlyLocX, friendlyLocY, friendlyRadius, multiplier, cols, rows) {
         
