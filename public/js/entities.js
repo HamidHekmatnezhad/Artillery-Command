@@ -2,12 +2,16 @@ class FriendlyUnit {
     constructor(maxX, maxY, cols, rows) {
         
         this.radius = 30;
-        this.health = 2000;
+        this.health = 1000;
         this.iconSize = 30;
 
         this.X = Math.floor(Math.random() * (maxX - 80)) + 40; // Ensure enemy is at least 20px from the edge;
         this.Y = Math.floor(Math.random() * (maxY - 80)) + 40; // Ensure enemy is at least 20px from the edge;
         
+        this.calculateGridLocation(maxX, maxY, cols, rows);
+    }
+
+    calculateGridLocation(maxX, maxY, cols, rows) {
         // Grid Location
         const colIndex = Math.floor(this.X / (maxX / cols));
         const rowIndex = Math.floor(this.Y / (maxY / rows));
@@ -64,11 +68,8 @@ class Enemy {
                 break;
         }
 
-        // Grid Location
-        const colIndex = Math.floor(this.X / (maxX / cols));
-        const rowIndex = Math.floor(this.Y / (maxY / rows));
-        this.gridLocation = String.fromCharCode(65 + rowIndex) + colIndex; // e.g., "A0", "B3", etc.
-
+        this.calculateGridLocation(maxX, maxY, cols, rows);
+        
         switch (enemyType) {
             case 0:
                 this.name = "Infantry";
@@ -106,6 +107,12 @@ class Enemy {
                 break;
         }
         this.scoreValue = this.health * this.multiplier;
+    }
+
+    calculateGridLocation(maxX, maxY, cols, rows) {
+        const colIndex = Math.floor(this.X / (maxX / cols));
+        const rowIndex = Math.floor(this.Y / (maxY / rows));
+        this.gridLocation = String.fromCharCode(65 + rowIndex) + colIndex; // e.g., "A0", "B3", etc.
     }
 
     takeDamage(damage) {

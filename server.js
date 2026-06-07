@@ -9,6 +9,8 @@ app.use(express.static('public', { index: false })); // static files in public f
 // Local Bootstrap for use in HTML pages offline
 app.use('/bootstrap', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist'))); 
 app.use('/b-icons', express.static(path.join(__dirname, 'node_modules', 'bootstrap-icons', 'font')));
+// Local p5
+app.use('/p5', express.static(path.join(__dirname, 'node_modules', 'p5', 'lib')));
 
 // adding Layout to pages
 function renderPagesWithLayout(pageName) {

@@ -5,7 +5,9 @@ class RadioSystem {
         this.history = []; // 0: typeSender, 1: mag(null), 2:msgCode, 3: category, 4: loc, 5: Type(enmey=0-6, Friendly=10, player=11 und null), 6: multiplier= 0,1,2 und null, 7: rowHtml
         this.data = null;
         this.userName = userName;
-        this.delayMsg = 1200;
+        this.delayMsgOp = 1200;
+        this.delayMsgHq = 1000;
+        this.maxNumberOfHistory = 50;
 
     }
 
@@ -75,26 +77,36 @@ class RadioSystem {
                 break;
         }
         this.history.push([typeSender, msg,  msgCode, category, loc, type, mul, rowHtml]);
+        if(this.history.length > this.maxNumberOfHistory){
+            this.history.shift();
+        }
 
         if(typeSender == 2) {
             setTimeout(() => {
                 this.show(rowHtml);
-            }, this.delayMsg);
+            }, this.delayMsgOp);
+        }
+        else if(typeSender == 1) {
+            setTimeout(() => {
+                this.show(rowHtml);
+            }, this.delayMsgHq);
         }
         else {
             this.show(rowHtml);
         } 
     }
 
-    handleMessageOperator(category, loc=null, type=null, mul=null) {
-        this.logMessage(2, null, null, category, loc, type, mul, null);
+    handleMessageOperator(gameOver,category, loc=null, type=null, mul=null) {
+        if(!gameOver){
+          this.logMessage(2, null, null, category, loc, type, mul, null); 
+        }
     }
 
     handleMessageHq(category, ammoType=null) {
         this.logMessage(1, null, null, category, null, null, null, ammoType);
     }
 
-    handleMessagePlayer(userInput) {
+    handleMessagePlayer(gameOver, userInput) {
 
         let cleanInput = userInput.replace(/[\.,-\/#!$%\^&\*;:{}=\-_`~()]/g, " "); // remove punctuation with regex
         cleanInput = cleanInput.trim().toLowerCase(); 
@@ -102,44 +114,45 @@ class RadioSystem {
         let commandFound = false;
 
         this.logMessage(0, userInput, 1000, null, null, 11, null, null) // show message from Player
+        if(!gameOver){
+            for(let kw of this.data.keyword){
 
-        for(let kw of this.data.keyword){
+                if(cleanInput.includes(kw[0])) {
 
-            if(cleanInput.includes(kw[0])) {
+                    let msgCode = kw[1];
+                    commandFound = true;
 
-                let msgCode = kw[1];
-                commandFound = true;
+                    switch(msgCode){   
+                        case 1001: // accept
+                            return true; // for start game, operator for new target and more
+                            break; // not usefull, but...
 
-                switch(msgCode){   
-                    case 1001: // accept
-                        return true; // for start game, operator for new target and more
-                        break; // not usefull, but...
-
-                    case 1002: // repeat
-                        let pmsg = false;
-                        for(let i = this.history.length - 1; i >= 0; i--){
-                            let pastMsg = this.history[i];
-                            if(pastMsg[0] == 2) {
-                                this.show(pastMsg[7]);
-                                pmsg = true;
-                                break;
+                        case 1002: // repeat
+                            let pmsg = false;
+                            for(let i = this.history.length - 1; i >= 0; i--){
+                                let pastMsg = this.history[i];
+                                if(pastMsg[0] == 2) {
+                                    this.show(pastMsg[7]);
+                                    pmsg = true;
+                                    break;
+                                }
                             }
-                        }
-                        if(!pmsg){
-                            this.logMessage(2, "no previous Request", msgCode, "", "", null, null, null);
-                        }
-                        break;
+                            if(!pmsg){
+                                this.logMessage(2, "no previous Request", msgCode, "", "", null, null, null);
+                            }
+                            break;
 
-                    case 1003: // help
-                        // TODO need a new logic
-                        break;
+                        case 1003: // help
+                            // TODO need a new logic
+                            break;
 
+                    }
+                    break;
                 }
-                break;
             }
-        }
-        if(!commandFound){
-            this.logMessage(2, null, null, "unknownCommond", null, null, null, null);
+            if(!commandFound){
+                this.logMessage(2, null, null, "unknownCommond", null, null, null, null);
+            }
         }
     }
 
@@ -150,8 +163,11 @@ class RadioSystem {
         }
     }
 
-    save() {} // TODO
-
-    load() {}// TODO
-
+    loadHistory(history) {
+        this.clear();
+        this.history = history;
+        for(let h of history) {
+            this.show(h[7]);
+        }
+    }
 }

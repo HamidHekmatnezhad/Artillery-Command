@@ -48,7 +48,6 @@ let timeToFlight = 3000;
 
 let btnFire, debugAim, hitboxSwitch, btnReset;
 
-
 let debugBlockToMeters = false;
 
 function preload() {
@@ -211,24 +210,43 @@ function showExplosions() {
     }
 }
 
+function gameOverHelper() {
+    radio.handleMessageOperator(gameOver, "gameOver");
+    gameOver = true;
+    saveGameState();
+}
+
+function showGameOver() {
+    btnFire.disabled = true;
+    textAlign(CENTER, CENTER);
+    textSize(80);
+    fill(255, 0, 0);
+    text("Game Over", width / 2, height / 2);
+    textSize(30);
+    fill(255);
+    text("Mission Failed! We lost the base.\n Send somethings to reset", width / 2, height / 2 + 60);
+}
+
 function impact(targetX, targetY, ammoType) {
     let blastRadius = [15, 30];
     let damage = [100, 40];
+    let mis = true;
 
     // friendly fire
     let d = dist(targetX, targetY, friendlyUnit.X, friendlyUnit.Y);
     if(d < friendlyUnit.radius + blastRadius[ammoType]) {
-        gameOver = true;
+        mis = false;
         friendlyUnit.takeDamage(damage[ammoType]);
-        scoreValue -= 500;
+        playerScore -= 500;
         if(friendlyUnit.isDestroyed()) {
-            gameOver = true;
+            gameOverHelper();
+        }
+        else {
+            radio.handleMessageOperator(gameOver, "friendlyHit");
         }
         // TODO: play explosion sound
-        // TODO: log in chat
     }
 
-    let mis = true;
     for(let i = enemies.length - 1; i >= 0; i--) {
         let e = enemies[i];
         let d = dist(targetX, targetY, e.X, e.Y);
@@ -239,21 +257,23 @@ function impact(targetX, targetY, ammoType) {
 
             if(e.isDestroyed()) {
                 playerScore += e.scoreValue;
-                radio.handleMessageOperator("enemyDestroyed", e.gridLocation, e.enemyType, e.multiplier);
+                radio.handleMessageOperator(gameOver, "enemyDestroyed", e.gridLocation, e.enemyType, e.multiplier);
                 enemies.splice(i, 1);
 
                 // show Score
                 let scoreText = document.getElementById('txt-score-point');
                 scoreText.innerText = playerScore;
+
+                saveGameState();
             }
-            else (
-                radio.handleMessageOperator("enemyHit", e.gridLocation, e.enemyType, e.multiplier)
+            else {
+                radio.handleMessageOperator(gameOver, "enemyHit", e.gridLocation, e.enemyType, e.multiplier)
                 // TODO: explosion Sound
-            )
+            }
         }
     }
     if(mis) {
-        radio.handleMessageOperator("enemyMissShot");
+        radio.handleMessageOperator(gameOver, "enemyMissShot");
     }
 
     explosions.push({
@@ -275,9 +295,12 @@ function fireArtillery() {
     noActionStartTime = millis();
 
     radio.handleMessageHq("shotFired", null);
+    setTimeout(() => {
+        radio.handleMessageHq("reloading", null);
+    }, 800)
 
     btnFire.disabled = true;
-    radio.handleMessageHq("reloading", null);
+
     setTimeout(() => {
         btnFire.disabled = false;
     }, reloadTime);
@@ -285,10 +308,26 @@ function fireArtillery() {
     setTimeout(() => {
         impact(targetX, targetY, ammoType);
     }, timeToFlight);
-
 }
 
-function resetGame() {} // TODO
+function resetGame() {
+    localStorage.removeItem('artilleryCommandSave');
+    playerScore = 0;
+    document.getElementById('txt-score-point').innerText = playerScore;
+    gameStarted = false;
+    gameOver = false;
+
+    friendlyUnit = new FriendlyUnit(canvasWidth, canvasHeight, cols, rows);
+    enemies = [];
+    explosions = [];
+
+    radio.clear();
+
+    btnFire.disabled = true;
+    saveGameState();
+
+    radio.handleMessageOperator(gameOver, "startGame");
+} 
 
 function loadArtilleryTable() {
     // call json file
@@ -319,7 +358,7 @@ function laodEnemyTable() {
     for(e of enemies){
         let tr = document.createElement('tr');
         tr.innerHTML = `
-        <td><img class="enemy-icon-in-table" src="${enemyIconsSrc[e.enemyType]}" alt="e.name"></td>
+        <td><img class="enemy-icon-in-table" src="${enemyIconsSrc[e.enemyType]}" alt="${e.name}"></td>
         <td>${e.gridLocation}</td>
         <td>${e.health}</td>
         <td>${e.size}</td>
@@ -333,15 +372,21 @@ function sendPalyerMessage() {
     let msg = chatInputElement.value;
 
     if(msg.trim() != "") {
-        let commandResult = radio.handleMessagePlayer(msg);
+        let commandResult = radio.handleMessagePlayer(gameOver, msg);
 
-        if(commandResult == true) {
+        if(gameOver){
+            resetGame();
+            chatInputElement.value = "";
+            return;
+        }
+
+        if(commandResult && !gameOver) {
             if(!gameStarted) {
                 gameStarted = true;
                 btnFire.disabled = false;
                 startTime = millis();
-                radio.handleMessageOperator("startedGame"); 
-                radio.handleMessageOperator("reportFriendlyLoc", friendlyUnit.gridLocation);
+                radio.handleMessageOperator(gameOver, "startedGame"); 
+                radio.handleMessageOperator(gameOver, "reportFriendlyLoc", friendlyUnit.gridLocation);
             }
         }
         chatInputElement.value = "";
@@ -354,14 +399,14 @@ function createEnemy() {
     let tmp = new Enemy(canvasWidth, canvasHeight, enemyRndmType, friendlyUnit.X, friendlyUnit.Y, friendlyUnit.radius, multiplierRndm, cols, rows);
     enemies.push(tmp);
     // Operator Log
-    radio.handleMessageOperator("enemySpot", tmp.gridLocation, tmp.enemyType, tmp.multiplier);
+    radio.handleMessageOperator(gameOver, "enemySpot", tmp.gridLocation, tmp.enemyType, tmp.multiplier);
     delete tmp;
 }
 
 function noActionCheck() {
     if(gameStarted && !gameOver) {
         if(millis() - noActionStartTime > noActionTimer) {
-            radio.handleMessageOperator("noAction");
+            radio.handleMessageOperator(gameOver, "noAction");
             noActionStartTime = millis();
         }
     }
@@ -377,6 +422,68 @@ function generateEnemies() {
             rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
             requestPlayer = false;
         }
+    }
+}
+
+function saveGameState() {
+    let saveObject = {
+        gameStarted: gameStarted,
+        gameOver: gameOver,
+        score: playerScore,
+        healthFr: friendlyUnit.health,
+        xFr: friendlyUnit.X,
+        yFr: friendlyUnit.Y,
+        enemies: enemies.map(e => ({
+            type: e.enemyType,
+            x: e.X,
+            y: e.Y,
+            health: e.health,
+            multiplier: e.multiplier
+        })),
+        chatHistory: radio.history 
+    };
+
+    // save in local Storage
+    localStorage.setItem('artilleryCommandSave', JSON.stringify(saveObject));
+}
+
+function loadGameState() {
+    let savedData = localStorage.getItem('artilleryCommandSave');
+    
+    if (savedData) {
+        let parsedData = JSON.parse(savedData);
+
+        gameStarted = parsedData.gameStarted;
+        gameOver = parsedData.gameOver;       
+        playerScore = parsedData.score;
+        friendlyUnit.health = parsedData.health;
+        friendlyUnit.X = parsedData.xFr;
+        friendlyUnit.Y = parsedData.yFr;
+        friendlyUnit.calculateGridLocation(canvasWidth, canvasHeight, cols, rows);
+        document.getElementById('txt-score-point').innerText = playerScore;
+        
+        enemies = [];
+        for(let e of parsedData.enemies) {
+            let newEnemy = new Enemy(canvasWidth, canvasHeight, e.type, friendlyUnit.X, friendlyUnit.Y, friendlyUnit.radius, e.multiplier, cols, rows);
+            newEnemy.X = e.x;
+            newEnemy.Y = e.y;
+            newEnemy.health = e.health;
+            newEnemy.calculateGridLocation(canvasWidth, canvasHeight, cols, rows);
+            enemies.push(newEnemy);
+        }
+
+        radio.loadHistory(parsedData.chatHistory);
+
+        if(gameStarted && !gameOver){
+            btnFire.disabled = false;
+        }
+        console.log("Game loaded successfully.");
+        return true;
+        
+    } 
+    else{
+        console.log("No save data found in this browser.");
+        return false;
     }
 }
 
@@ -408,14 +515,6 @@ function setup() {
 
     loadArtilleryTable();
 
-    // create radio system with user name
-    radio = new RadioSystem("Player"); // TODO: get user name from history.json
-    chatInputElement = document.getElementById('chat-input');
-    btnSendChatElement = document.getElementById('btn-send');
-    radio.loadJsonData().then(() => {
-        radio.handleMessageOperator("startGame");
-    });
-
     // btn Fire 
     btnFire = document.getElementById('btn-fire');
     let ammoType = 0;
@@ -423,6 +522,18 @@ function setup() {
         btnFire.addEventListener('click', fireArtillery);
     }
     btnFire.disabled = true; 
+
+    // create radio system with user name
+    radio = new RadioSystem("Player"); // TODO: get user name from history.json
+    chatInputElement = document.getElementById('chat-input');
+    btnSendChatElement = document.getElementById('btn-send');
+    radio.loadJsonData().then(() => {
+        let saveFound = loadGameState();
+
+        if(!saveFound){
+            radio.handleMessageOperator(gameOver, "startGame");
+        }
+    });
 
     // switch aim debug line
     debugAim = document.getElementById('switch-debug-aim');
@@ -441,7 +552,7 @@ function setup() {
     }
     
     // btn reset game
-    btnReset = document.getElementById('btn-reset');
+    btnReset = document.getElementById('btn-reset-game');
     if (btnReset) {
         btnReset.addEventListener('click', function() {
             resetGame();
@@ -485,6 +596,10 @@ function draw() {
     showExplosions();
     laodEnemyTable();
 
+    if(gameOver) {
+        showGameOver();
+    }
+
 }
 
 function windowResized() {
@@ -496,4 +611,10 @@ function windowResized() {
     showEnemies();
 }
 
-// TODO: History
+// save when change dir
+window.addEventListener("beforeunload", function() {
+    saveGameState();
+});
+
+
+// TODO function RESET

@@ -62,11 +62,11 @@
     ],
 
     "gameOver":[
-
+        "HQ, we are under heavy fire! We need to retreat!"
     ],
 
     "friendlyHit":[
-
+        "Friendly fire!"
     ],
 
     "reloading":[
