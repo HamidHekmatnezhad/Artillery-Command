@@ -56,7 +56,7 @@ class RadioSystem {
 
     logMessage(typeSender, msg, msgCode, category, loc, type, mul, ammoType) {
         let finalMsg = "";
-        if(!msg) {
+        if(msg === null) {
             finalMsg = this.formatMessage(category, loc, type, mul, ammoType);
         }
         else {

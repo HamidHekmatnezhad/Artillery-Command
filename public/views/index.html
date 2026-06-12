@@ -9,9 +9,86 @@
     {{NAVBAR}}
 
     <div class="container mt-3">
+
+        <!-- Title -->
         <h1 class="text-warning" id="txt-titel"></h1>
-        <p class="text-secondary" id="txt-subtitel"></p>
+    
+        <div class="row mb-3">
+
+            <!-- Subtitle -->
+            <div class="col-6">
+                <div class="card bg-dark border-secondary h-100">
+                    <p class="text-light m-3" id="txt-subtitel"></p>
+                </div>
+            </div>
+
+            <!-- input name -->
+            <div class="col-6">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header text-success fw-bold" id="input-name-header-card"></div>
+                    <div class="card-body">
+                        <h5 class="text-warning mb-3" id="welcome-msg"></h5>
+
+                        <label for="player-name" class="form-label text-info" id="input-name-label-txt"></label>
+                        <input type="text" class="form-control bg-dark text-light border-secondary mb-3" id="player-name">
+                        <button class="btn btn-danger w-100 fw-bold fs-4" id="btn-start-game" ></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="row text-center">
+
+            <!-- card Game -->
+            <div class="col-md-3 mb-3">
+                <a href="/game" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body">
+                            <h5 class="text-warning" id="title-card-game"></h5>
+                            <p class="small text-light" id="subtitle-card-game"></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- card Leaderboard -->
+            <div class="col-md-3 mb-3">
+                <a href="/leaderboard" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body">
+                            <h5 class="text-warning" id="title-card-leaderboard"></h5>
+                            <p class="small text-light" id="subtitle-card-leaderboard"></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- card Help -->
+            <div class="col-md-3 mb-3">
+                <a href="/leaderboard" class="text-decoration-none">
+                    <div class="card bg-dark border-secondary h-100">
+                        <div class="card-body">
+                            <h5 class="text-warning" id="title-card-help"></h5>
+                            <p class="small text-light" id="subtitle-card-help"></p>
+                        </div>
+                    </div>
+                </a>
+            </div>
+
+            <!-- card About -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-body">
+                        <h5 class="text-warning" id="title-card-about"></h5>
+                        <p class="small text-light" id="subtitle-card-about"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    {{FOOTER}}
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -21,10 +98,60 @@
                 .then(data => {
                     document.getElementById("txt-titel").innerText = data.index.tabTitle;
                     document.getElementById("txt-subtitel").innerText = data.index.subtitel;
+                    document.getElementById("input-name-header-card").innerText = data.index.inputNameHeaderCard;
+                    document.getElementById("input-name-label-txt").innerText = data.index.inputNameLabelTxt;
+                    document.getElementById("btn-start-game").innerText = data.index.btnStartGame;
+                    document.getElementById("title-card-game").innerText = data.index.titleCardGame;
+                    document.getElementById("subtitle-card-game").innerText = data.index.subtitleCardGame;
+                    document.getElementById("title-card-leaderboard").innerText = data.index.titleCardLeaderboard;
+                    document.getElementById("subtitle-card-leaderboard").innerText = data.index.subtitleCardLeaderboard;
+                    document.getElementById("title-card-help").innerText = data.index.titleCardHelp;
+                    document.getElementById("subtitle-card-help").innerText = data.index.subtitleCardHelp;
+                    document.getElementById("title-card-about").innerText = data.index.titleCardAbout;
+                    document.getElementById("subtitle-card-about").innerText = data.index.subtitleCardAbout;
+                    
                 })
                 .catch(error => console.error("Error loading JSON data:", error));
         });
     </script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const nameInput = document.getElementById('player-name');
+            const btnStart = document.getElementById('btn-start-game');
+            const welcomeMsg = document.getElementById('welcome-msg');
+
+            // check if there is a saved name in local storage
+            const savedName = localStorage.getItem('artilleryPlayerName');
+            if (savedName) {
+                nameInput.value = savedName; 
+                
+                if (welcomeMsg) {
+                    welcomeMsg.innerText = "Hello Commander " + savedName;
+                }
+            }
+
+            btnStart.addEventListener('click', () => {
+                let playerName = nameInput.value.trim();
+                
+                if (playerName === "") {
+                    playerName = "Unknown Commander";
+                }
+
+                localStorage.setItem('artilleryPlayerName', playerName);
+                window.location.href = '/index'
+
+            });
+            
+            nameInput.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    btnStart.click();
+                }
+            });
+    });
+    </script>
+
 </body>
 </html>
+
+<!-- let currentPlayer = localStorage.getItem('artilleryPlayerName'); -->

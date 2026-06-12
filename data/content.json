@@ -11,9 +11,29 @@
     "index": {
             "tabTitle": "Artillery Command",
             "titel": "Artillery Command",
-            "subtitel": "Funker test",
-            "btnText": "Start"
+            "subtitel": "Welcome to the command center. Here you can coordinate artillery strikes, \n manage radio communications, and destroy enemy targets.",
+            "btnText": "Start",
+            "inputNameHeaderCard": "Commander Identification",
+            "inputNameLabelTxt": "Enter your Callsign / Name:",
+            "btnStartGame": "START MISSION",
+            "titleCardGame": "Game",
+            "subtitleCardGame": "The tactical map to engage enemies and test your skills.",
+            "titleCardLeaderboard": "Leaderboard",
+            "subtitleCardLeaderboard": "Top players, highest scores, and targets destroyed.",
+            "titleCardHelp": "Help",
+            "subtitleCardHelp": "Learn the rules, ammo types, and mechanics.",
+            "titleCardAbout": "About",
+            "subtitleCardAbout": "Information about the project and developers."
+
         },
+
+    "footer": {
+        "copyrightText": "&copy; 2026 Artillery Command. All rights reserved.",
+        "devText": "Developed by Hamid Hekmatnezhad for Web Programming at THD.",
+        "email": "mailto:h.hekmatnezhad@gmail.com",
+        "github": "https://github.com/HamidHekmatnezhad/Artillery-Command",
+        "linkedin": "https://www.linkedin.com/in/hamid-hekmatnezhad"
+    },
         
     "game": {
         "tabTitle": "Mission Area",
@@ -52,10 +72,13 @@
     "leaderboard": {
         "tabTitle": "Leaderboard",
         "titel": "Leaderboard",
-        "subtitel": "Top Players",
+        "subtitel": "Top commanders ranked by their highest score and combat effectiveness. Review the confirmed kills and strategic targets destroyed.",
         "rank": "Rank",
         "player": "Player",
-        "score": "Score"
+        "score": "Score",
+        "thTitleRank": "Rank",
+        "thTitleCommander": "Commander",
+        "thTitleScore": "Total Score"
     },
 
     "help": {
@@ -67,9 +90,21 @@
 
     "about": {
         "tabTitle": "About Artillery Command",
-        "titel": "About Artillery Command",
-        "subtitel": "Game Overview",
-        "content": "Dieses Spiel wurde für das Projekt in Webprogrammierung entwickelt."
+        "titel": "About the Project",
+        "subtitel": "Declassified information regarding the development and technology behind Artillery Command.",
+        "titleProjectCard": "Project Intel",
+        "subtitleProjectCard": "<strong>Artillery Command</strong> is a tactical simulation game focused on coordination, precision, and strategic resource management. Players must calculate trajectories using grid coordinates and manage radio communications to successfully destroy enemy targets.<br><br>The project aims to synchronize mathematical logic with an interactive digital environment, creating a challenging and immersive experience.",
+        "titleProgCard": "Programming Languages and Tools",
+        "frontendText": "<span class=\"fw-bold text-warning\">Frontend:</span> HTML5, CSS3, Bootstrap 5",
+        "engineText": "<span class=\"fw-bold text-warning\">Game Engine:</span> p5.js (Canvas Rendering)",
+        "backendText": "<span class=\"fw-bold text-warning\">Backend:</span> Node.js, Express.js",
+        "dataText": "<span class=\"fw-bold text-warning\">Data Storage:</span> JSON, LocalStorage API",
+        "creditText": "<span class=\"fw-bold text-warning\">Credits:</span> Game Icons provided by Game-icons.net under the CC BY 3.0 License.",
+        "titleCardAboutme": "About Me",
+        "nameCardAboutme": "Hamid Hekmatnezhad",
+        "subtitleCardAboutme": "Developer and Designer",
+        "textCardAboutme": "Developed as part of Web Programming 1 studies in Informatik at Technische Hochschule Deggendorf (THD).<br><br>Special thanks to the open-source community and all field commanders (players) testing the systems."
+
     }
 
 }

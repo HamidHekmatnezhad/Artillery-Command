@@ -1,0 +1,37 @@
+<footer class="bg-dark text-center text-light border-top border-secondary py-4 mt-5">
+    <div class="container">
+        
+        <a href="" class="fs-3 mx-3 text-decoration-none" id="email">
+            <i class="bi bi-envelope-fill text-warning"></i>
+        </a>
+
+        <a href="" target="_blank" class="fs-4 mx-3 text-decoration-none" id="github">
+            <i class="bi bi-github text-warning"></i>
+        </a>
+
+        <a href="" target="_blank" class=" fs-4 mx-3 text-decoration-none" id="linkedin">
+            <i class="bi bi-linkedin text-warning"></i>
+        </a>
+
+        <p class="small fw-bold text-warning" id="copyright-txt"></p>
+        <p class="small text-secondary" id="dev-text"></p>
+        
+    </div>
+</footer>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        fetch('/api/content') // request json file
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("copyright-txt").innerHTML = data.footer.copyrightText;
+                document.getElementById("dev-text").innerText = data.footer.devText;
+
+                document.getElementById("github").setAttribute("href", data.footer.github);
+                document.getElementById("email").setAttribute("href", data.footer.email);
+                document.getElementById("linkedin").setAttribute("href", data.footer.linkedin);
+
+            })
+            .catch(error => console.error("Error loading JSON data:", error));
+    });
+</script>

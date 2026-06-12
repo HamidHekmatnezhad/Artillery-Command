@@ -9,9 +9,88 @@
     {{NAVBAR}}
 
     <div class="container mt-3">
-        <h1 class="text-warning" id="txt-titel"></h1>
-        <p class="text-secondary" id="txt-subtitel"></p>
+
+        <!-- Title and Subtitle -->
+        <div class="row mb-3">
+            <h1 class="text-warning" id="txt-titel"></h1>
+            <p class="text-light" id="txt-subtitel"></p>
+        </div>
+
+        <!-- Leaderboard -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card bg-dark border-secondary shadow-lg">
+                    <div class="card-body p-0 overflow-auto">
+                        <table class="table table-dark table-striped table-hover text-center align-middle mb-0">
+                            <thead class="text-warning border-secondary">
+                                <tr>
+                                    <th id="th-title-rank"></th>
+                                    <th id="th-title-commander"></th>
+                                    <th id="th-title-score"></th>
+                                    <th><img src="/assets/images/infantry.png" width="30" title="Infantry"></th>
+                                    <th><img src="/assets/images/tank.png" width="30" title="Tank"></th>
+                                    <th><img src="/assets/images/base.png" width="30" title="Base"></th>
+                                    <th><img src="/assets/images/truck.png" width="30" title="Truck"></th>
+                                    <th><img src="/assets/images/apc.png" width="30" title="APC"></th>
+                                    <th><img src="/assets/images/outpost.png" width="30" title="Outpost"></th>
+                                    <th><img src="/assets/images/armoredCar.png" width="30" title="Armored Car"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="leaderboard-body">
+                                <tr></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    {{FOOTER}}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            fetch('/api/leaderboard')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('leaderboard-body');
+                    tbody.innerHTML = ''; 
+                    
+                    // no records
+                    if (data.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="10" class="text-muted py-4">No records found. The war has just begun!</td></tr>';
+                        return;
+                    }
+                    
+                    // ساخت ردیف برای هر بازیکن
+                    // each player 
+                    data.forEach((player, index) => {
+                        // when data is empty, use default value
+                        const enemies = player.enemiesDestroyed || [0, 0, 0, 0, 0, 0, 0];
+                        
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="fw-bold ">${index + 1}</td>
+                            <td class="text-info fw-bold">${player.name}</td>
+                            <td class="text-success fw-bold">${player.score}</td>
+                            <td>${enemies[0]}</td>
+                            <td>${enemies[1]}</td>
+                            <td>${enemies[2]}</td>
+                            <td>${enemies[3]}</td>
+                            <td>${enemies[4]}</td>
+                            <td>${enemies[5]}</td>
+                            <td>${enemies[6]}</td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching leaderboard:', error);
+                    document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="10" class="text-danger py-4">Error loading data. Connection to HQ lost.</td></tr>';
+                });
+        });
+    </script>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -21,6 +100,9 @@
                 .then(data => {
                     document.getElementById("txt-titel").innerText = data.leaderboard.tabTitle;
                     document.getElementById("txt-subtitel").innerText = data.leaderboard.subtitel;
+                    document.getElementById("th-title-rank").innerText = data.leaderboard.thTitleRank;
+                    document.getElementById("th-title-commander").innerText = data.leaderboard.thTitleCommander;
+                    document.getElementById("th-title-score").innerText = data.leaderboard.thTitleScore;
                 })
                 .catch(error => console.error("Error loading JSON data:", error));
         });

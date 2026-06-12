@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     {{HEAD}}
 </head>
@@ -9,9 +9,57 @@
     {{NAVBAR}}
 
     <div class="container mt-3">
-        <h1 class="text-warning" id="txt-titel"></h1>
-        <p class="text-secondary" id="txt-subtitel"></p>
+        
+        <!-- Title and Subtitle -->
+        <div class="row mb-3">
+                <h1 class="text-warning fw-bold" id="title"></h1>
+                <p class="text-light mt-3" id="subtitle"></p>
+        </div>
+
+        <div class="row mb-3">
+
+            <div class="col-md-6 mb-3">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-info fw-bold" id="title-project-card"></div>
+                    <div class="card-body">
+                        <p class="text-light" id="subtitle-project-card"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <div class="card bg-dark border-secondary h-100">
+                    <div class="card-header border-secondary text-danger fw-bold" id="title-prog-card"></div>
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush bg-dark text-light">
+                            <li class="list-group-item bg-dark text-light border-secondary" id="frontend-text"></li>
+                            <li class="list-group-item bg-dark text-light border-secondary" id="engine-text"></li>
+                            <li class="list-group-item bg-dark text-light border-secondary" id="backend-text"></li>
+                            <li class="list-group-item bg-dark text-light border-secondary" id="data-text"></li>
+                            <li class="list-group-item bg-dark text-light border-secondary" id="credit-text"></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <div class="card bg-dark border-secondary">
+                    <div class="card-header border-secondary text-success fw-bold text-center" id="title-card-aboutme"></div>
+                    <div class="card-body text-center">
+                        <h4 class="text-warning" id="name-card-aboutme"></h4>
+                        <p class="text-info" id="subtitle-card-aboutme"></p>
+                        <p class="text-light" id="text-card-aboutme"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
+
+    {{FOOTER}}
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -19,8 +67,22 @@
             fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById("txt-titel").innerText = data.about.tabTitle;
-                    document.getElementById("txt-subtitel").innerText = data.about.subtitel;
+                    document.getElementById("title").innerText = data.about.tabTitle;
+                    document.getElementById("subtitle").innerText = data.about.subtitel;
+                    document.getElementById("title-project-card").innerText = data.about.titleProjectCard;
+                    document.getElementById("title-prog-card").innerText = data.about.titleProgCard;
+                    document.getElementById("title-card-aboutme").innerText = data.about.titleCardAboutme;
+                    document.getElementById("name-card-aboutme").innerText = data.about.nameCardAboutme;
+                    document.getElementById("subtitle-card-aboutme").innerText = data.about.subtitleCardAboutme;
+
+                    document.getElementById("subtitle-project-card").innerHTML = data.about.subtitleProjectCard;
+                    document.getElementById("frontend-text").innerHTML = data.about.frontendText;
+                    document.getElementById("engine-text").innerHTML = data.about.engineText;
+                    document.getElementById("backend-text").innerHTML = data.about.backendText;
+                    document.getElementById("data-text").innerHTML = data.about.dataText;
+                    document.getElementById("text-card-aboutme").innerHTML = data.about.textCardAboutme;
+                    document.getElementById("credit-text").innerHTML = data.about.creditText;
+                    
                 })
                 .catch(error => console.error("Error loading JSON data:", error));
         });

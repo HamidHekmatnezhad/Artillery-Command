@@ -16,6 +16,8 @@ let enemies = [];
 let enemyIcons = [];
 let enemyIconsSrc = [];
 let limitEnemies = 6;
+let enemiesDestroyed = [0, 0, 0, 0, 0, 0, 0];
+let leaderboard
 
 let friendlyUnit, friendlyUnitIcon;
 
@@ -25,6 +27,7 @@ let gameOver = false;
 let playerScore = 0;
 let chatInputElement;
 let btnSendChatElement;
+let playerName;
 let requestPlayer = false; // TODO: logic
 
 let startTime;
@@ -264,6 +267,8 @@ function impact(targetX, targetY, ammoType) {
                 let scoreText = document.getElementById('txt-score-point');
                 scoreText.innerText = playerScore;
 
+                enemiesDestroyed[e.enemyType]++;
+
                 saveGameState();
             }
             else {
@@ -320,6 +325,7 @@ function resetGame() {
     friendlyUnit = new FriendlyUnit(canvasWidth, canvasHeight, cols, rows);
     enemies = [];
     explosions = [];
+    enemiesDestroyed = [0, 0, 0, 0, 0, 0, 0];
 
     radio.clear();
 
@@ -425,6 +431,23 @@ function generateEnemies() {
     }
 }
 
+function sendLeaderboardData() {
+    fetch('/api/saveLeaderboard', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(leaderboard) // obj to string
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("Server response:", data.message);
+    })
+    .catch(error => {
+        console.error('Error sending score to server:', error);
+    });
+}
+
 function saveGameState() {
     let saveObject = {
         gameStarted: gameStarted,
@@ -440,16 +463,32 @@ function saveGameState() {
             health: e.health,
             multiplier: e.multiplier
         })),
-        chatHistory: radio.history 
+        chatHistory: radio.history,
+        destroyedEnemies: enemiesDestroyed
     };
+
+    leaderboard = {
+        name: playerName,
+        score: playerScore,
+        enemiesDestroyed: enemiesDestroyed
+    }
 
     // save in local Storage
     localStorage.setItem('artilleryCommandSave', JSON.stringify(saveObject));
+
+    // save in leaderboard data in server
+    if(playerName != "Unknown Commander")
+        sendLeaderboardData();
 }
 
 function loadGameState() {
     let savedData = localStorage.getItem('artilleryCommandSave');
+    let nameData  = localStorage.getItem('artilleryPlayerName');
     
+    if(nameData) {
+        playerName = nameData;
+    }
+
     if (savedData) {
         let parsedData = JSON.parse(savedData);
 
@@ -474,6 +513,13 @@ function loadGameState() {
 
         radio.loadHistory(parsedData.chatHistory);
 
+        if(parsedData.destroyedEnemies){
+            enemiesDestroyed = parsedData.destroyedEnemies;
+        }
+        else {
+            enemiesDestroyed = [0, 0, 0, 0, 0, 0, 0];
+        }
+
         if(gameStarted && !gameOver){
             btnFire.disabled = false;
         }
@@ -484,6 +530,17 @@ function loadGameState() {
     else{
         console.log("No save data found in this browser.");
         return false;
+    }
+}
+
+function loadPlayerName() {
+    let nameData = localStorage.getItem('artilleryPlayerName');
+
+    if(nameData) {
+        return nameData;
+    }
+    else {
+        return "Unknown Commander";
     }
 }
 
@@ -524,7 +581,8 @@ function setup() {
     btnFire.disabled = true; 
 
     // create radio system with user name
-    radio = new RadioSystem("Player"); // TODO: get user name from history.json
+    playerName = loadPlayerName();
+    radio = new RadioSystem(playerName);
     chatInputElement = document.getElementById('chat-input');
     btnSendChatElement = document.getElementById('btn-send');
     radio.loadJsonData().then(() => {
@@ -615,6 +673,3 @@ function windowResized() {
 window.addEventListener("beforeunload", function() {
     saveGameState();
 });
-
-
-// TODO function RESET

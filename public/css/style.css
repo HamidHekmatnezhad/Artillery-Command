@@ -31,3 +31,7 @@ canvas { display: block; }
     height: 24px; 
     object-fit: contain;
 }
+
+.text-decoration-none {
+    text-decoration: none;
+}
