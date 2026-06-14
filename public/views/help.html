@@ -21,6 +21,7 @@
             fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("title-text").innerHTML = data.help.tabTitle;
                     document.getElementById("txt-titel").innerText = data.help.tabTitle;
                     document.getElementById("txt-subtitel").innerText = data.help.subtitel;
                 })

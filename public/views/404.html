@@ -1,1 +1,33 @@
-hi
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {{HEAD}}
+</head>
+
+<body class="bg-dark text-light">
+
+    {{NAVBAR}}
+
+    <div class="container mt-3">
+        <h1 class="text-warning text-center fs-1" id="404-text-h1"></h1>
+        <p class="text-secondary text-center fs-6" id="404-text-p"></p>
+    </div>
+
+    {{FOOTER}}
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            
+            fetch('/api/content') // request json file
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("404-text-h1").innerText = data.error404.TextH1;
+                    document.getElementById("404-text-p").innerText = data.error404.TextP;
+                    
+                })
+                .catch(error => console.error("Error loading JSON data:", error));
+        });
+    </script>
+
+</body>
+</html>

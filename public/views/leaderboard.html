@@ -19,9 +19,9 @@
         <!-- Leaderboard -->
         <div class="row">
             <div class="col-12">
-                <div class="card bg-dark border-secondary shadow-lg">
+                <div class="card bg-dark border-secondary">
                     <div class="card-body p-0 overflow-auto">
-                        <table class="table table-dark table-striped table-hover text-center align-middle mb-0">
+                        <table class="table table-dark table-striped table-hover text-center">
                             <thead class="text-warning border-secondary">
                                 <tr>
                                     <th id="th-title-rank"></th>
@@ -63,7 +63,6 @@
                         return;
                     }
                     
-                    // ساخت ردیف برای هر بازیکن
                     // each player 
                     data.forEach((player, index) => {
                         // when data is empty, use default value
@@ -87,7 +86,6 @@
                 })
                 .catch(error => {
                     console.error('Error fetching leaderboard:', error);
-                    document.getElementById('leaderboard-body').innerHTML = '<tr><td colspan="10" class="text-danger py-4">Error loading data. Connection to HQ lost.</td></tr>';
                 });
         });
     </script>
@@ -98,6 +96,7 @@
             fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("title-text").innerHTML = data.leaderboard.tabTitle;
                     document.getElementById("txt-titel").innerText = data.leaderboard.tabTitle;
                     document.getElementById("txt-subtitel").innerText = data.leaderboard.subtitel;
                     document.getElementById("th-title-rank").innerText = data.leaderboard.thTitleRank;

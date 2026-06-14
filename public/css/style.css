@@ -35,3 +35,20 @@ canvas { display: block; }
 .text-decoration-none {
     text-decoration: none;
 }
+
+/* scroll bar in chat box */
+.chatbox-scroll-edit::-webkit-scrollbar {
+    width: 8px;
+}
+.chatbox-scroll-edit::-webkit-scrollbar-track {
+    background: #1a1a1a; 
+    border-radius: 4px;
+}
+.chatbox-scroll-edit::-webkit-scrollbar-thumb {
+    background: #198754;
+    border-radius: 4px;
+}
+.chatbox-scroll-edit::-webkit-scrollbar-thumb:hover {
+    background: #28a745; 
+
+}

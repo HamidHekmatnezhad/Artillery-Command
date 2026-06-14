@@ -34,6 +34,11 @@
         "github": "https://github.com/HamidHekmatnezhad/Artillery-Command",
         "linkedin": "https://www.linkedin.com/in/hamid-hekmatnezhad"
     },
+
+    "error404": {
+        "TextH1": "404",
+        "TextP": "Page not found!"
+    },
         
     "game": {
         "tabTitle": "Mission Area",
@@ -42,8 +47,8 @@
         "controller": "Weapons Control Panel",
         "funker": "Radio Operator",
         "btnFireTxt": "FIRE",
-        "xAxis": "X-Axis",
-        "yAxis": "Y-Axis",
+        "xAxis": "Degree",
+        "yAxis": "Mil",
         "txtScore": "Score: ",
         "sendChat": "Send",
         "ammo1Head": "HE Shell",
@@ -93,7 +98,7 @@
         "titel": "About the Project",
         "subtitel": "Declassified information regarding the development and technology behind Artillery Command.",
         "titleProjectCard": "Project Intel",
-        "subtitleProjectCard": "<strong>Artillery Command</strong> is a tactical simulation game focused on coordination, precision, and strategic resource management. Players must calculate trajectories using grid coordinates and manage radio communications to successfully destroy enemy targets.<br><br>The project aims to synchronize mathematical logic with an interactive digital environment, creating a challenging and immersive experience.",
+        "subtitleProjectCard": "<strong>Artillery Command</strong> is a tactical simulation game focused on coordination, precision, and strategic resource management. Players act as fire support commanders, calculating trajectories via grid coordinates and managing radio communications to destroy enemy targets.<br><br>Inspired by the realistic mechanics of military simulators like <strong>Arma</strong> and <strong>Squad</strong>, the game shifts focus from frontline combat to the behind-the-scenes challenges of indirect fire support emphasizing map reading, communication protocols, and analytical skills.<br><br>Ultimately, it synchronizes mathematical logic with an interactive digital environment to deliver a challenging and deeply immersive tactical experience.",
         "titleProgCard": "Programming Languages and Tools",
         "frontendText": "<span class=\"fw-bold text-warning\">Frontend:</span> HTML5, CSS3, Bootstrap 5",
         "engineText": "<span class=\"fw-bold text-warning\">Game Engine:</span> p5.js (Canvas Rendering)",

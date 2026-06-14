@@ -32,7 +32,7 @@
                     <div class="card-header border-secondary text-success fw-bold">
                         <span class="fw-bold" id="header-funker"></span> 
                     </div>
-                    <div class="card-body chat-history-container overflow-auto custom-height">
+                    <div class="card-body chat-history-container overflow-auto custom-height chatbox-scroll-edit">
                         <!-- Chat messages will be displayed here -->
                         <div class="small" id="chat-box">
                         </div>           
@@ -236,6 +236,7 @@
             fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("title-text").innerHTML = data.game.tabTitle;
                     document.getElementById("txt-titel").innerText = data.game.tabTitle;
                     document.getElementById("header-controller").innerText = data.game.controller;
                     document.getElementById("header-funker").innerText = data.game.funker;

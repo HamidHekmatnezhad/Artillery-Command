@@ -81,8 +81,23 @@ app.get('/api/radioOperator', (req, res) => {
     res.json(data);
 });
 app.get('/api/leaderboard', (req, res) => {
-    const data = require('./data/leaderboard.json');
-    res.json(data);
+    const filePath = path.join(__dirname, 'data', 'leaderboard.json');
+    
+    // read data
+    fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            console.error("Error reading leaderboard:", err);
+            return res.status(500).json([]); // when error, return a empty list
+        }
+        
+        try {
+            const parsedData = JSON.parse(data);
+            res.json(parsedData);
+        } catch (e) {
+            console.error("Error parsing JSON:", e);
+            res.json([]);
+        }
+    });
 });
 
 // ------------- API Save Data -------------

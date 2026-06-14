@@ -67,6 +67,7 @@
             fetch('/api/content') // request json file
                 .then(response => response.json())
                 .then(data => {
+                    document.getElementById("title-text").innerHTML = data.about.tabTitle;
                     document.getElementById("title").innerText = data.about.tabTitle;
                     document.getElementById("subtitle").innerText = data.about.subtitel;
                     document.getElementById("title-project-card").innerText = data.about.titleProjectCard;

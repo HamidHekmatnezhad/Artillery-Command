@@ -28,7 +28,6 @@ let playerScore = 0;
 let chatInputElement;
 let btnSendChatElement;
 let playerName;
-let requestPlayer = false; // TODO: logic
 
 let startTime;
 let minTime = 10000; // 10 seconds
@@ -200,6 +199,43 @@ function calculateAimPosition() {
     }
 }
 
+function calculateGridToMilAndDeg(gridLetter, gridNumber) {
+    if(gridNumber < 0 || gridNumber > cols) {
+        return false;
+    }
+
+    let gridY = gridLetter.charCodeAt(0) - 65; // A=0, B=1, ...
+    let gridX = gridNumber;
+    let targetPxX = (gridX * cellW) + (cellW / 2);
+    let targetPxY = (gridY * cellH) + (cellH / 2);
+    
+    // calculate Degree
+    let dx = targetPxX - aimLineX;
+    let dy = targetPxY - aimLineY;
+    let angleRad = Math.atan2(dy, dx);
+    let degree = Math.round((angleRad * (180 / Math.PI) + 180) % 360);
+    
+    // calculate Mil
+    let maxPixelRange = dist(aimLineX, aimLineY, 0, 0);
+    let targetDistPx = dist(aimLineX, aimLineY, targetPxX, targetPxY);
+    let rangeMeters = Math.round(map(targetDistPx, 0, maxPixelRange, 0, 3000));
+    
+    if(rangeMeters > 2940) {
+        return false;
+    } 
+    else {
+        // reverse function for mil
+        let sinVal = rangeMeters / 2940;
+        if(sinVal > 1) {
+            sinVal = 1; // 
+        }
+        let barrelRad = (Math.PI - Math.asin(sinVal)) / 2; 
+        let mil = Math.round(barrelRad * (3200 / Math.PI));
+        
+        return [degree, mil]
+    }
+}
+
 function showExplosions() {
     for(let i = explosions.length - 1; i >= 0; i--){
         let exp = explosions[i];
@@ -247,7 +283,6 @@ function impact(targetX, targetY, ammoType) {
         else {
             radio.handleMessageOperator(gameOver, "friendlyHit");
         }
-        // TODO: play explosion sound
     }
 
     for(let i = enemies.length - 1; i >= 0; i--) {
@@ -273,7 +308,6 @@ function impact(targetX, targetY, ammoType) {
             }
             else {
                 radio.handleMessageOperator(gameOver, "enemyHit", e.gridLocation, e.enemyType, e.multiplier)
-                // TODO: explosion Sound
             }
         }
     }
@@ -420,13 +454,12 @@ function noActionCheck() {
 
 function generateEnemies() {
     if(gameStarted && !gameOver) {
-        if ((millis() - startTime > rdmTime && !gameOver) || (requestPlayer)) {
+        if ((millis() - startTime > rdmTime && !gameOver)) {
             if (enemies.length < limitEnemies) {
                 createEnemy();
             }
             startTime = millis(); 
             rdmTime = rdm(minTime, maxTime); // Random time between minTime and maxTime
-            requestPlayer = false;
         }
     }
 }
@@ -495,7 +528,7 @@ function loadGameState() {
         gameStarted = parsedData.gameStarted;
         gameOver = parsedData.gameOver;       
         playerScore = parsedData.score;
-        friendlyUnit.health = parsedData.health;
+        friendlyUnit.health = parsedData.healthFr;
         friendlyUnit.X = parsedData.xFr;
         friendlyUnit.Y = parsedData.yFr;
         friendlyUnit.calculateGridLocation(canvasWidth, canvasHeight, cols, rows);
@@ -629,6 +662,56 @@ function setup() {
             }
         });
     }
+
+    // Keyboard Controls 
+    document.addEventListener('keydown', function(event) {
+        // If the player is typing in the chat box, keyboard control is disable
+        if (document.activeElement === chatInputElement) return;
+
+        let inputMil = document.getElementById('input-y');
+        let inputDeg = document.getElementById('input-x');
+
+        switch(event.key) {
+            case "w":
+            case "W":
+            case "ArrowUp":
+                event.preventDefault(); // disable scroll page
+                inputMil.stepUp();   
+                inputMil.dispatchEvent(new Event('input'))
+                break;
+
+            case "s":
+            case "S":
+            case "ArrowDown":
+                event.preventDefault();
+                inputMil.stepDown();   
+                inputMil.dispatchEvent(new Event('input'))
+                break;
+
+            case "a":
+            case "A":
+            case "ArrowLeft":
+                event.preventDefault();
+                inputDeg.stepDown();
+                inputDeg.dispatchEvent(new Event('input'))
+                break;
+
+            case "d":
+            case "D":
+            case "ArrowRight":
+                event.preventDefault();
+                inputDeg.stepUp();
+                inputDeg.dispatchEvent(new Event('input'))
+                break;
+
+            case " ": // Spacebar
+                event.preventDefault();
+                if (!btnFire.disabled && gameStarted && !gameOver) {
+                    fireArtillery(); 
+                }
+                break;
+        }
+    });
 
     if(debugBlockToMeters){
         // block 132m and pixel 3.59
