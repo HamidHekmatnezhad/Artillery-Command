@@ -315,7 +315,6 @@
         ["confirm", 1001],
         ["acknowledged", 1001],
         ["acknowledge", 1001],
-        ["wilco", 1001],
         ["understood", 1001],
         ["yes", 1001],
         ["ja", 1001],
@@ -407,10 +406,6 @@
         ["hostile loc", 1005],
         ["contact", 1005],
         ["contacts", 1005],
-        ["bogey", 1005],
-        ["bogeys", 1005],
-        ["tango", 1005],
-        ["tangos", 1005],
         ["bad guys", 1005],
         ["where to shoot", 1005],
        
