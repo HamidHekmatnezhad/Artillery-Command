@@ -36,7 +36,7 @@ let firstTime = 2000; // 2 seconds
 let rdmTime;
 let noActionTimer = 120000; // 2 minutes
 let noActionStartTime;
-let reloadTime = 4000; // 5 seconds
+let reloadTime = 4000; // 4 seconds
 
 let currentAngle = 90;
 let currentMil = 1000;
@@ -46,11 +46,15 @@ let aimLineDebug = false;
 let positionX, positionY;
 
 let explosions = [];
-let timeToFlight = 3000;
+let timeToFlight = 7000;
 
 let btnFire, debugAim, hitboxSwitch, btnReset;
 
 let debugBlockToMeters = false;
+
+let chatSound; 
+let chatSoundTimeout;
+let timerForPlaySound = 1500;
 
 function preload() {
     // Load background map
@@ -331,6 +335,13 @@ function fireArtillery() {
     let targetX = positionX;
     let targetY = positionY;
 
+    // play video
+    let artiVideo = document.getElementById('artillery-video');
+    if (artiVideo) {
+        artiVideo.currentTime = 0; // sec 0
+        artiVideo.play(); // play video
+    }
+
     noActionStartTime = millis();
 
     radio.handleMessageHq("shotFired", null);
@@ -577,6 +588,23 @@ function loadPlayerName() {
     }
 }
 
+function playChatSound() {
+    if (chatSound) {
+        chatSound.currentTime = 0; // start time
+        
+        // for error
+        chatSound.play().catch(error => console.log("Audio blocked before user interaction"));
+
+        // stop perv. sound
+        clearTimeout(chatSoundTimeout);
+        
+        // for 2s play
+        chatSoundTimeout = setTimeout(() => {
+            chatSound.pause();
+        }, timerForPlaySound); 
+    }
+}
+
 function setup() {
     // find the container div for the canvas
     container = document.getElementById('canvas-container');
@@ -602,6 +630,9 @@ function setup() {
     aimLineX = width / 2;
     aimLineY = height + 300;
     aimLineColor = color(255, 0, 0);
+
+    // chat sound
+    chatSound = new Audio("./../assets/sounds/chat_sound.mp3");
 
     loadArtilleryTable();
 

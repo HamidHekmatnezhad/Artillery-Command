@@ -27,6 +27,8 @@ class RadioSystem {
     show(rowHtml) {
         this.chatBox.innerHTML += rowHtml;
         this.chatBox.parentElement.scrollTop = this.chatBox.parentElement.scrollHeight;
+
+        playChatSound();
     }
 
     formatMessage(category, loc, type, mul, ammoType, hp, enemyCount, deg, mil) {
