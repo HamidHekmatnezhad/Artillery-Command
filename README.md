@@ -34,21 +34,18 @@ To run this game locally on your machine:
 
 1. Clone the repository:
    ```bash
-   git clone [https://github.com/HamidHekmatnezhad/Artillery-Command.git](https://github.com/HamidHekmatnezhad/Artillery-Command.git)
-
+   git clone https://github.com/HamidHekmatnezhad/Artillery-Command.git
     ```
 
 2. Navigate to the project directory:
     ```bash
     cd Artillery-Command
-
     ```
 
 
 3. Install the required Node.js dependencies:
     ```bash
     npm install
-
     ```
 
 
@@ -56,7 +53,6 @@ To run this game locally on your machine:
     ```bash
     npm start 
     # or run: node server.js (depending on your package.json setup)
-
     ```
 
 
