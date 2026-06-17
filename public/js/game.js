@@ -259,6 +259,22 @@ function gameOverHelper() {
     saveGameState();
 }
 
+function showStartScreen() {
+    fill(0, 0, 0, 150);
+    rect(0, 0, width, height);
+
+    // header text
+    textAlign(CENTER, CENTER);
+    textSize(50);
+    fill(255, 200, 0); 
+    text("AWAITING ORDERS", width / 2, height / 2 - 40);
+
+    // help text
+    textSize(22);
+    fill(255);
+    text("Type 'Ready', 'Yes', or 'Copy' in the chat to start the mission.", width / 2, height / 2 + 20);
+}
+
 function showGameOver() {
     btnFire.disabled = true;
     textAlign(CENTER, CENTER);
@@ -767,6 +783,10 @@ function draw() {
     showEnemies();
     showExplosions();
     laodEnemyTable();
+
+    if (!gameStarted && !gameOver) {
+        showStartScreen();
+    }
 
     if(gameOver) {
         showGameOver();
