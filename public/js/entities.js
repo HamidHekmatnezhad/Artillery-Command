@@ -2,7 +2,7 @@ class FriendlyUnit {
     constructor(maxX, maxY, cols, rows) {
         
         this.radius = 30;
-        this.health = 1000;
+        this.health = 300;
         this.iconSize = 30;
 
         this.X = Math.floor(Math.random() * (maxX - 80)) + 40; // Ensure enemy is at least 20px from the edge;
