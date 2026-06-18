@@ -283,7 +283,7 @@ function showGameOver() {
     text("Game Over", width / 2, height / 2);
     textSize(30);
     fill(255);
-    text("Mission Failed! We lost the base.\n Send somethings to reset", width / 2, height / 2 + 60);
+    text("Mission Failed! We lost the base.\n Write something in the chat to reset.", width / 2, height / 2 + 60);
 }
 
 function impact(targetX, targetY, ammoType) {
